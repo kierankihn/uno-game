@@ -54,11 +54,6 @@ namespace UNO::GAME {
         [[nodiscard]] Card front() const;
 
         /**
-         * @return 牌堆是否为空
-         */
-        [[nodiscard]] bool isEmpty() const;
-
-        /**
          * 将牌堆中的卡牌随机洗混
          */
         void shuffle();
@@ -70,12 +65,17 @@ namespace UNO::GAME {
 
     public:
         CardTile();
+
+        /**
+         * @return 牌堆是否为空
+         */
+        [[nodiscard]] bool isEmpty() const;
     };
 
     /**
      * @brief 弃牌堆
      */
-    class DiscardPile : CardTile {
+    class DiscardPile : public CardTile {
     public:
         DiscardPile();
 
@@ -93,7 +93,7 @@ namespace UNO::GAME {
     /**
      * @brief 起牌堆
      */
-    class Deck : CardTile {
+    class Deck : public CardTile {
     public:
         Deck();
 
