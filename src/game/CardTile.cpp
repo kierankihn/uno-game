@@ -39,6 +39,11 @@ namespace UNO::GAME {
         return card;
     }
 
+    Card CardTile::front() const
+    {
+        return cards_.front();
+    }
+
     bool CardTile::isEmpty() const
     {
         return cards_.empty();
@@ -61,6 +66,11 @@ namespace UNO::GAME {
     void DiscardPile::add(Card card)
     {
         this->pushFront(card);
+    }
+
+    Card DiscardPile::getFront()
+    {
+        return this->front();
     }
 
     Deck::Deck() = default;

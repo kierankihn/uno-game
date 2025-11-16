@@ -49,6 +49,11 @@ namespace UNO::GAME {
         Card popBack();
 
         /**
+         * @return 牌堆中最上方的牌
+         */
+        [[nodiscard]] Card front() const;
+
+        /**
          * @return 牌堆是否为空
          */
         [[nodiscard]] bool isEmpty() const;
@@ -78,6 +83,11 @@ namespace UNO::GAME {
          * 向弃牌堆中添加 @param card 卡牌
          */
         void add(Card card);
+
+        /**
+         * @return 牌堆中最上方的牌
+         */
+        Card getFront();
     };
 
     /**
