@@ -40,7 +40,17 @@ namespace UNO::GAME {
          */
         [[nodiscard]] size_t getRemainingCardCount() const;
 
+        /**
+         * 将剩余手牌设置为 x 张
+         * @param x 要设置的张数
+         */
         void setRemainingCardCount(size_t x);
+
+        /**
+         * 设置 Uno 状态
+         * @param x Uno 状态
+         */
+        void setIsUno(bool x);
     };
 
     /**

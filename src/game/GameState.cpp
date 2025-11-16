@@ -36,6 +36,11 @@ namespace UNO::GAME {
         this->remainingCardCount_ = x;
     }
 
+    void PlayerState::setIsUno(bool x)
+    {
+        this->isUno_ = x;
+    }
+
     ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard) :
         PlayerState(std::move(name), remainingCardCount, isUno), handCard_(handCard)
     {
