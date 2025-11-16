@@ -56,7 +56,10 @@ namespace UNO::GAME {
     /**
      * （供客户端使用）玩家状态
      */
-    class ClientPlayerState : public PlayerState {};
+    class ClientPlayerState : public PlayerState {
+    public:
+        ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno);
+    };
 
     /**
      * （供服务端使用）玩家状态

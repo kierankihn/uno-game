@@ -41,6 +41,11 @@ namespace UNO::GAME {
         this->isUno_ = x;
     }
 
+    ClientPlayerState::ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
+        PlayerState(name, remainingCardCount, isUno)
+    {
+    }
+
     ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard) :
         PlayerState(std::move(name), remainingCardCount, isUno), handCard_(handCard)
     {
