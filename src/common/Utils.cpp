@@ -12,11 +12,13 @@ namespace UNO::COMMON {
         return gen_;
     }
 
+    Utils* Utils::instance_ = nullptr;
+
     Utils *Utils::getInstance() {
-        if (Utils::instance_ == nullptr) {
-            Utils::instance_ = new Utils();
+        if (instance_ == nullptr) {
+            instance_ = new Utils();
         }
-        return Utils::instance_;
+        return instance_;
     }
     Random &Utils::getRandom() {
         return this->random_;
