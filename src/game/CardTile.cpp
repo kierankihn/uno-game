@@ -81,7 +81,9 @@ namespace UNO::GAME {
         for (const auto color : AllColors) {
             for (const auto type : AllTypes) {
                 if (color != CardColor::WILD && type != CardType::WILD && type != CardType::WILDDRAWFOUR) {
-                    this->pushBack(color, type);
+                    for (int i = 1 + (type == CardType::NUM0); i <= 2; i++) {
+                        this->pushBack(color, type);
+                    }
                 }
             }
         }
