@@ -45,7 +45,7 @@ namespace UNO::GAME {
         return cards_.empty();
     }
 
-    Player::Player(std::string &name) : name_(std::move(name)), handCard_(nullptr) {}
+    Player::Player(std::string &name) : name_(std::move(name)), handCard(nullptr) {}
 
     const std::string &Player::getName() const
     {

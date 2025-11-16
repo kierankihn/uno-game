@@ -64,7 +64,7 @@ namespace UNO::GAME {
         std::string name_;
 
     public:
-        HandCard *handCard_;
+        HandCard *handCard;
 
         explicit Player(std::string &name);
 
