@@ -8,6 +8,7 @@ find_package(ftxui CONFIG REQUIRED)
 add_executable(uno-game src/main.cpp
         src/game/Card.cpp
         src/game/CardTile.cpp
+        src/game/Player.cpp
         src/common/utils.cpp
 )
 target_link_libraries(uno-game
@@ -18,6 +19,7 @@ target_link_libraries(uno-game
 
 add_library(uno-game-lib src/game/Card.cpp
         src/game/CardTile.cpp
+        src/game/Player.cpp
         src/common/utils.cpp
 )
 
