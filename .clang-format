@@ -145,7 +145,7 @@ NamespaceIndentation: All
 PointerAlignment: Right
 
 # 允许重新排版注释
-ReflowComments: Always
+# ReflowComments: Always
 
 # 允许排序#include
 SortIncludes: true
