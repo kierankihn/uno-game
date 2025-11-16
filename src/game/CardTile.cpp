@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <random>
 
-#include "../common/utils.h"
+#include "../common/Utils.h"
 
 namespace UNO::GAME {
     CardTile::CardTile() = default;

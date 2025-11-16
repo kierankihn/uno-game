@@ -4,7 +4,7 @@
  * @author Yuzhe Guo
  * @date 2025.11.15
  */
-#include "utils.h"
+#include "Utils.h"
 
 namespace UNO::COMMON {
     Random::Random() : rd_(), gen_(rd_()) {}
