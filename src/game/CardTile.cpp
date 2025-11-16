@@ -51,8 +51,6 @@ namespace UNO::GAME {
 
     void CardTile::shuffle()
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
         std::ranges::shuffle(cards_, COMMON::Utils::getInstance()->getRandom().getGenerator());
     }
 
@@ -68,7 +66,7 @@ namespace UNO::GAME {
         this->pushFront(card);
     }
 
-    Card DiscardPile::getFront()
+    Card DiscardPile::getFront() const
     {
         return this->front();
     }
