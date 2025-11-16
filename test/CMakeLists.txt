@@ -7,6 +7,7 @@ project(uno-game-test)
 
 add_executable(uno-game-test unit/game/CardTest.cpp
         unit/game/CardTileTest.cpp
+        unit/game/PlayerTest.cpp
 )
 
 target_link_libraries(uno-game-test
