@@ -75,4 +75,22 @@ namespace UNO::GAME {
         }
         return this->type_ < other.type_;
     }
+
+    bool Card::canBePlayedOn(const Card &other) const
+    {
+        if (other.getType()== CardType::DRAW2 && this->type_ != CardType::DRAW2 && this->type_ != CardType::WILDDRAWFOUR) {
+            return false;
+        }
+        if (other.getType() == CardType::WILDDRAWFOUR && this->type_ != CardType::WILDDRAWFOUR) {
+            return false;
+        }
+        if (this->color_ == CardColor::WILD) {
+            return true;
+        }
+        if (this->color_ == other.getColor() || this->type_ == other.getType()) {
+            return true;
+        }
+        return false;
+    }
+
 }

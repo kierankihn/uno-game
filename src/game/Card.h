@@ -86,6 +86,12 @@ namespace UNO::GAME {
          * 比较运算符，用于排序
          */
         bool operator<(const Card &other) const;
+
+        /**
+         * @param other 另一张牌
+         * @return 是否能在打出另一张牌后打出
+         */
+        [[nodiscard]] bool canBePlayedOn(const Card &other) const;
     };
 }   // namespace UNO::GAME
 
