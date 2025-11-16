@@ -73,7 +73,10 @@ namespace UNO::GAME {
         return this->front();
     }
 
-    Deck::Deck() = default;
+    Deck::Deck()
+    {
+        this->init();
+    }
 
     void Deck::init()
     {
