@@ -68,4 +68,11 @@ namespace UNO::GAME {
         }
         return std::format("{} {}", this->colorToString(), this->typeToString());
     }
+
+    bool Card::operator<(const Card &other) const {
+        if (this->color_ != other.color_) {
+            return this->color_ < other.color_;
+        }
+        return this->type_ < other.type_;
+    }
 }

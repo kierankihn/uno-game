@@ -81,6 +81,11 @@ namespace UNO::GAME {
          * @return 卡牌对应的显示字符串
          */
         [[nodiscard]] std::string toString() const;
+
+        /**
+         * 比较运算符，用于排序
+         */
+        bool operator<(const Card &other) const;
     };
 }   // namespace UNO::GAME
 
