@@ -66,7 +66,7 @@ namespace UNO::GAME {
     public:
         HandCard *handCard;
 
-        explicit Player(std::string &name);
+        explicit Player(std::string name);
 
         /**
          * @return 返回玩家名字
