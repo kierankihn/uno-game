@@ -9,9 +9,8 @@ add_executable(uno-game src/main.cpp
         src/game/Card.cpp
         src/game/CardTile.cpp
         src/game/Player.cpp
-        src/common/utils.cpp
         src/game/GameState.cpp
-        src/game/GameState.h
+        src/common/Utils.cpp
 )
 target_link_libraries(uno-game
         PRIVATE ftxui::screen
@@ -22,9 +21,8 @@ target_link_libraries(uno-game
 add_library(uno-game-lib src/game/Card.cpp
         src/game/CardTile.cpp
         src/game/Player.cpp
-        src/common/utils.cpp
         src/game/GameState.cpp
-        src/game/GameState.h
+        src/common/Utils.cpp
 )
 
 add_subdirectory(test)
