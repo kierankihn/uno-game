@@ -195,7 +195,9 @@ namespace UNO::GAME {
     template<PlayerStateTypeConcept PlayerStateType>
     void GameState<PlayerStateType>::addPlayer(PlayerStateType playerState)
     {
-        this->currentPlayer_ = this->players_.push_back(std::move(playerState), this->currentPlayer_);
+        int currentPlayerIndex = this->currentPlayer_ - this->players_.begin();
+        this->players_.push_back(std::move(playerState));
+        this->currentPlayer_ = this->players_.begin() + currentPlayerIndex;
     }
 
     template<PlayerStateTypeConcept PlayerStateType>
