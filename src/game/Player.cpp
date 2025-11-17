@@ -9,12 +9,7 @@
 #include <utility>
 
 namespace UNO::GAME {
-    HandCard::HandCard(const std::array<Card, 7> &cards)
-    {
-        for (const auto &card : cards) {
-            cards_.insert(card);
-        }
-    }
+    HandCard::HandCard() = default;
 
     const std::multiset<Card> &HandCard::getCards() const
     {

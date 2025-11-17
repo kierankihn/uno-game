@@ -23,7 +23,7 @@ namespace UNO::GAME {
         std::multiset<Card> cards_;
 
     public:
-        explicit HandCard(const std::array<Card, 7> &cards);
+        explicit HandCard();
 
         /**
          * 获得当前手牌
