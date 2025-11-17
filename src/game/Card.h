@@ -15,12 +15,12 @@ namespace UNO::GAME {
     /**
      * @brief 卡牌颜色
      */
-    enum class CardColor : uint8_t { RED, YELLOW, BLUE, GREEN, WILD };
+    enum class CardColor : uint8_t { RED, YELLOW, BLUE, GREEN };
 
     /**
      * 所有颜色
      */
-    constexpr std::array<CardColor, 5> AllColors = {CardColor::RED, CardColor::YELLOW, CardColor::BLUE, CardColor::GREEN, CardColor::WILD};
+    constexpr std::array AllColors = {CardColor::RED, CardColor::YELLOW, CardColor::BLUE, CardColor::GREEN};
 
     /**
      * @brief 卡牌类型
@@ -30,21 +30,21 @@ namespace UNO::GAME {
     /**
      * 所有类型
      */
-    constexpr std::array<CardType, 15> AllTypes = {CardType::NUM0,
-                                                   CardType::NUM1,
-                                                   CardType::NUM2,
-                                                   CardType::NUM3,
-                                                   CardType::NUM4,
-                                                   CardType::NUM5,
-                                                   CardType::NUM6,
-                                                   CardType::NUM7,
-                                                   CardType::NUM8,
-                                                   CardType::NUM9,
-                                                   CardType::SKIP,
-                                                   CardType::REVERSE,
-                                                   CardType::DRAW2,
-                                                   CardType::WILD,
-                                                   CardType::WILDDRAWFOUR};
+    constexpr std::array AllTypes = {CardType::NUM0,
+                                     CardType::NUM1,
+                                     CardType::NUM2,
+                                     CardType::NUM3,
+                                     CardType::NUM4,
+                                     CardType::NUM5,
+                                     CardType::NUM6,
+                                     CardType::NUM7,
+                                     CardType::NUM8,
+                                     CardType::NUM9,
+                                     CardType::SKIP,
+                                     CardType::REVERSE,
+                                     CardType::DRAW2,
+                                     CardType::WILD,
+                                     CardType::WILDDRAWFOUR};
 
     /**
      * @brief 卡牌类

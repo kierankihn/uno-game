@@ -80,7 +80,7 @@ namespace UNO::GAME {
     {
         for (const auto color : AllColors) {
             for (const auto type : AllTypes) {
-                if (color != CardColor::WILD && type != CardType::WILD && type != CardType::WILDDRAWFOUR) {
+                if (type != CardType::WILD && type != CardType::WILDDRAWFOUR) {
                     for (int i = 1 + (type == CardType::NUM0); i <= 2; i++) {
                         this->pushBack(color, type);
                     }
@@ -88,8 +88,8 @@ namespace UNO::GAME {
             }
         }
         for (int i = 0; i < 4; i++) {
-            this->pushBack(CardColor::WILD, CardType::WILD);
-            this->pushBack(CardColor::WILD, CardType::WILDDRAWFOUR);
+            this->pushBack(CardColor::RED, CardType::WILD);
+            this->pushBack(CardColor::RED, CardType::WILDDRAWFOUR);
         }
         this->shuffle();
     }
