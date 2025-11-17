@@ -77,9 +77,8 @@ namespace UNO::GAME {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
         }
-        this->currentPlayer_->setRemainingCardCount((this->currentPlayer_->getRemainingCardCount() + this->drawCount_));
-        this->currentPlayer_->draw(this->deck_.draw(this->drawCount_));
-        this->drawCount_ = 0;
-        this->nextPlayer();
+        this->currentPlayer_->handCard->draw(this->deck_.draw(this->drawCount_));
+
+        GameState::updateStateByDraw();
     }
 }   // namespace UNO::GAME
