@@ -58,11 +58,6 @@ namespace UNO::GAME {
          */
         void shuffle();
 
-        /**
-         * 清空牌堆
-         */
-        void clear();
-
     public:
         CardTile();
 
@@ -70,6 +65,11 @@ namespace UNO::GAME {
          * @return 牌堆是否为空
          */
         [[nodiscard]] bool isEmpty() const;
+
+        /**
+         * 清空牌堆
+         */
+        void clear();
     };
 
     /**
