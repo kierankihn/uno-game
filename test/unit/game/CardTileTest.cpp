@@ -28,8 +28,15 @@ TEST(card_tile_test, card_tile_test_3)
 {
     UNO::GAME::Deck deck;
     ASSERT_EQ(deck.isEmpty(), false);
-    deck.draw(108);
-    ASSERT_EQ(deck.isEmpty(), true);
-    deck.draw(107);
+
+    for (size_t i = 1; ; i++) {
+        deck.draw();
+        if (deck.isEmpty()) {
+            ASSERT_EQ(i, 108);
+            break;
+        }
+    }
+
+    deck.draw(1);
     ASSERT_EQ(deck.isEmpty(), false);
 }

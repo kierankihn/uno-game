@@ -16,10 +16,10 @@ TEST(player_test, player_test_1)
         UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::REVERSE),
         UNO::GAME::Card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::SKIP),
         UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::NUM3),
-        UNO::GAME::Card(UNO::GAME::CardColor::WILD, UNO::GAME::CardType::WILDDRAWFOUR),
+        UNO::GAME::Card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::WILDDRAWFOUR),
         UNO::GAME::Card(UNO::GAME::CardColor::GREEN, UNO::GAME::CardType::NUM9),
         UNO::GAME::Card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::NUM1),
-        UNO::GAME::Card(UNO::GAME::CardColor::WILD, UNO::GAME::CardType::WILD)
+        UNO::GAME::Card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::WILD)
     });
 
     ASSERT_EQ(handCard.getCards().begin()->getColor(), UNO::GAME::CardColor::RED);

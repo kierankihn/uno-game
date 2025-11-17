@@ -32,9 +32,9 @@ TEST(card_test, card_test_2)
 
 TEST(card_test, card_test_3)
 {
-    const UNO::GAME::Card card(UNO::GAME::CardColor::WILD, UNO::GAME::CardType::WILD);
+    const UNO::GAME::Card card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::WILD);
 
-    EXPECT_EQ(card.getColor(), UNO::GAME::CardColor::WILD);
+    EXPECT_EQ(card.getColor(), UNO::GAME::CardColor::RED);
     EXPECT_EQ(card.getType(), UNO::GAME::CardType::WILD);
     EXPECT_EQ(card.colorToString(), std::string("Wild"));
     EXPECT_EQ(card.typeToString(), std::string("Wild"));
@@ -43,21 +43,11 @@ TEST(card_test, card_test_3)
 
 TEST(card_test, card_test_4)
 {
-    const UNO::GAME::Card card(UNO::GAME::CardColor::WILD, UNO::GAME::CardType::WILDDRAWFOUR);
+    const UNO::GAME::Card card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::WILDDRAWFOUR);
 
-    EXPECT_EQ(card.getColor(), UNO::GAME::CardColor::WILD);
+    EXPECT_EQ(card.getColor(), UNO::GAME::CardColor::RED);
     EXPECT_EQ(card.getType(), UNO::GAME::CardType::WILDDRAWFOUR);
     EXPECT_EQ(card.colorToString(), std::string("Wild"));
     EXPECT_EQ(card.typeToString(), std::string("Wild Draw 4"));
     EXPECT_EQ(card.toString(), std::string("Wild Draw 4"));
-}
-
-TEST(card_test, card_test_5)
-{
-    EXPECT_THROW(UNO::GAME::Card(UNO::GAME::CardColor::WILD, UNO::GAME::CardType::NUM0), std::invalid_argument);
-}
-
-TEST(card_test, card_test_6)
-{
-    EXPECT_THROW(UNO::GAME::Card(UNO::GAME::CardColor::RED, UNO::GAME::CardType::WILD), std::invalid_argument);
 }
