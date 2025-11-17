@@ -79,7 +79,6 @@ namespace UNO::GAME {
 
     Card ServerPlayerState::play(const Card &card)
     {
-        PlayerState::play(card);
         for (auto it = this->handCard_.getCards().begin();; it++) {
             if (it == this->handCard_.getCards().end()) {
                 throw std::invalid_argument("Card not found in hand");
