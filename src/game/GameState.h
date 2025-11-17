@@ -256,9 +256,14 @@ namespace UNO::GAME {
     template<PlayerStateTypeConcept PlayerStateType>
     void GameState<PlayerStateType>::updateStateByDraw()
     {
-        if (this->drawCount_ != 0) {
-            this->drawCount_ = 0;
+        if (this->drawCount_ == 0) {
+            this->currentPlayer_->setRemainingCardCount(this->currentPlayer_->getRemainingCardCount() + 1);
         }
+        else {
+            this->currentPlayer_->setRemainingCardCount((this->currentPlayer_->getRemainingCardCount() + this->drawCount_));
+        }
+        this->drawCount_ = 0;
+        this->nextPlayer();
     }
 
     class ClientGameState final : public GameState<ClientPlayerState> {
