@@ -15,7 +15,6 @@ namespace UNO::GAME {
     {
     }
 
-
     std::string PlayerState::getName() const
     {
         return this->name_;
@@ -30,15 +29,20 @@ namespace UNO::GAME {
     {
         return this->remainingCardCount_;
     }
-
-    void PlayerState::setRemainingCardCount(size_t x)
-    {
-        this->remainingCardCount_ = x;
-    }
-
     void PlayerState::setIsUno(bool x)
     {
         this->isUno_ = x;
+    }
+
+    void PlayerState::draw(size_t n, const std::vector<Card> &cards)
+    {
+        this->remainingCardCount_ += n;
+    }
+
+    Card PlayerState::play(const Card &card)
+    {
+        this->remainingCardCount_--;
+        return card;
     }
 
     ClientPlayerState::ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
@@ -46,43 +50,79 @@ namespace UNO::GAME {
     {
     }
 
-    ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard) :
-        PlayerState(std::move(name), remainingCardCount, isUno), handCard(handCard)
+    void ClientPlayerState::draw(size_t n, const std::vector<Card> &cards)
     {
+        PlayerState::draw(n, cards);
+    }
+
+    Card ClientPlayerState::play(const Card &card)
+    {
+        return PlayerState::play(card);
+    }
+
+    ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
+        PlayerState(std::move(name), remainingCardCount, isUno)
+    {
+    }
+
+    const std::multiset<Card> &ServerPlayerState::getCards() const
+    {
+        return this->handCard_.getCards();
+    }
+
+    void ServerPlayerState::draw(size_t x, const std::vector<Card> &cards)
+    {
+        PlayerState::draw(x, cards);
+        this->handCard_.draw(cards);
+    }
+
+
+    Card ServerPlayerState::play(const Card &card)
+    {
+        PlayerState::play(card);
+        for (auto it = this->handCard_.getCards().begin();; it++) {
+            if (it == this->handCard_.getCards().end()) {
+                throw std::invalid_argument("Card not found in hand");
+            }
+            if (card.getType() == it->getType()
+                && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
+                this->handCard_.play(it);
+                break;
+            }
+        }
+        return PlayerState::play(card);
+    }
+
+    bool ServerPlayerState::isEmpty() const
+    {
+        return this->handCard_.isEmpty();
     }
 
     ClientGameState::ClientGameState(GameStatus gameStatus, Player player) : GameState(gameStatus), player(std::move(player)) {}
 
     ServerGameState::ServerGameState() : GameState(GameStatus::WAITING_PLAYERS_TO_JOIN) {}
 
-    void ServerGameState::updateStateByCard(const Card &card)
+    void ServerGameState::init()
     {
-        if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront()) == false) {
-            throw std::invalid_argument("Card cannot be played");
+        deck_.clear(), discardPile_.clear();
+        while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
+            discardPile_.add(deck_.draw());
         }
 
-        const auto &handCardSet = this->getCurrentPlayer()->handCard->getCards();
-        for (auto it = handCardSet.begin(); ; it++) {
-            if (it == handCardSet.end()) {
-                throw std::invalid_argument("Card not found in hand");
-            }
-            if (card.getType() == it->getType() && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
-                this->getCurrentPlayer()->handCard->play(it);
-                break;
+        for (size_t i = 0; i < 7; i++) {
+            for (auto &player : this->players_) {
+                player.draw(1, this->deck_.draw(1));
             }
         }
-
-        GameState::updateStateByCard(card);
     }
-
 
     void ServerGameState::updateStateByDraw()
     {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
         }
-        this->currentPlayer_->handCard->draw(this->deck_.draw(this->drawCount_));
-
-        GameState::updateStateByDraw();
+        this->currentPlayer_->draw(this->drawCount_, deck_.draw(this->drawCount_));
+        this->drawCount_ = 0;
+        this->nextPlayer();
     }
 }   // namespace UNO::GAME

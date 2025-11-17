@@ -23,8 +23,10 @@ namespace UNO::GAME {
         size_t remainingCardCount_;
         bool isUno_;
 
-    public:
         PlayerState(std::string name, size_t remainingCardCount, bool isUno);
+
+    public:
+        virtual ~PlayerState() = default;
 
         /**
          * @return 玩家名字
@@ -42,34 +44,79 @@ namespace UNO::GAME {
         [[nodiscard]] size_t getRemainingCardCount() const;
 
         /**
-         * 将剩余手牌设置为 x 张
-         * @param x 要设置的张数
-         */
-        void setRemainingCardCount(size_t x);
-
-        /**
          * 设置 Uno 状态
          * @param x Uno 状态
          */
         void setIsUno(bool x);
+
+        /**
+         * 摸牌
+         * @param n 摸的张数
+         * @param cards 摸到的牌
+         */
+        void virtual draw(size_t n, const std::vector<Card> &cards);
+
+        /**
+         * 出一张牌
+         */
+        Card virtual play(const Card &card);
     };
 
     /**
      * （供客户端使用）玩家状态
      */
-    class ClientPlayerState : public PlayerState {
+    class ClientPlayerState final : public PlayerState {
     public:
         ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno);
+
+        /**
+         * 摸牌
+         * @param n 摸的张数
+         * @param cards 摸的牌
+         */
+        void draw(size_t n, const std::vector<Card> &cards) override;
+
+        /**
+         * 出一张牌
+         */
+        Card play(const Card &card) override;
     };
 
     /**
      * （供服务端使用）玩家状态
      */
-    class ServerPlayerState : public PlayerState {
-    public:
-        explicit ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard);
+    class ServerPlayerState final : public PlayerState {
+    private:
+        HandCard handCard_;
 
-        HandCard *handCard;
+    public:
+        explicit ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno);
+
+        /**
+         * 获得当前手牌
+         * @return 当前手牌的集合
+         */
+        [[nodiscard]] const std::multiset<Card> &getCards() const;
+
+
+        /**
+         * 摸牌
+         * @param x 摸的张数
+         * @param cards 摸的牌
+         */
+        void draw(size_t x, const std::vector<Card> &cards) override;
+
+        /**
+         * 打出一张牌
+         * @param card 要打出的手牌
+         * @return 打出的手牌
+         */
+        Card play(const Card &card) override;
+
+        /**
+         * @return 手牌是否为空
+         */
+        [[nodiscard]] bool isEmpty() const;
     };
 
     /**
@@ -241,7 +288,7 @@ namespace UNO::GAME {
         if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront()) == false) {
             throw std::invalid_argument("Card cannot be played");
         }
-        this->currentPlayer_->setRemainingCardCount(this->currentPlayer_->getRemainingCardCount() - 1);
+        this->currentPlayer_->play(card);
         if (card.getType() == CardType::DRAW2) {
             this->drawCount_ += 2;
         }
@@ -264,7 +311,7 @@ namespace UNO::GAME {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
         }
-        this->currentPlayer_->setRemainingCardCount((this->currentPlayer_->getRemainingCardCount() + this->drawCount_));
+        this->currentPlayer_->draw(this->drawCount_, {});
         this->drawCount_ = 0;
         this->nextPlayer();
     }
@@ -284,10 +331,9 @@ namespace UNO::GAME {
         ServerGameState();
 
         /**
-         * 由于用户出牌而改变状态
-         * @param card 用户出的牌
+         * 开始游戏
          */
-        void updateStateByCard(const Card &card) override;
+        void init();
 
         /**
          * 由于用户摸牌而改变状态
