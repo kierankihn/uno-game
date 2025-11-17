@@ -115,10 +115,6 @@ TEST(game_state_test, game_state_test_2)
     }
 
     while (true) {
-        if (serverGameState.getCurrentPlayer()->getRemainingCardCount() == 0) {
-            break;
-        }
-
         for (auto it = serverGameState.getCurrentPlayer()->getCards().begin();; it++) {
             const auto player = serverGameState.getCurrentPlayer();
             auto prevCards    = player->getCards();
@@ -140,7 +136,8 @@ TEST(game_state_test, game_state_test_2)
 
                 break;
             }
-            if (it->canBePlayedOn(serverGameState.getDiscardPile().getFront())) {
+
+            if (it->canBePlayedOn(serverGameState.getDiscardPile().getFront(), serverGameState.getDrawCount())) {
                 auto card        = *it;
                 size_t prevCount = player->getCards().count(card);
 
@@ -158,6 +155,12 @@ TEST(game_state_test, game_state_test_2)
 
                 break;
             }
+        }
+
+        ASSERT_EQ(serverGameState.getCurrentPlayer()->getRemainingCardCount(), serverGameState.getCurrentPlayer()->getCards().size());
+
+        if (serverGameState.getCurrentPlayer()->getRemainingCardCount() == 0) {
+            break;
         }
     }
 }
