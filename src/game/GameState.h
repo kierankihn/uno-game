@@ -66,14 +66,10 @@ namespace UNO::GAME {
      * （供服务端使用）玩家状态
      */
     class ServerPlayerState : public PlayerState {
-    private:
-        HandCard *handCard_;
-
     public:
         explicit ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard);
 
-        template<typename... T>
-        void draw(T... args);
+        HandCard *handCard;
     };
 
     /**
@@ -156,7 +152,7 @@ namespace UNO::GAME {
          * 由于用户出牌而改变状态
          * @param card 用户出的牌
          */
-        void updateStateByCard(const Card &card);
+        void virtual updateStateByCard(const Card &card);
 
         /**
          * 由于用户摸牌而改变状态
@@ -286,6 +282,12 @@ namespace UNO::GAME {
 
     public:
         ServerGameState();
+
+        /**
+         * 由于用户出牌而改变状态
+         * @param card 用户出的牌
+         */
+        void updateStateByCard(const Card &card) override;
 
         /**
          * 由于用户摸牌而改变状态

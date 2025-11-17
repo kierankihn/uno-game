@@ -47,19 +47,30 @@ namespace UNO::GAME {
     }
 
     ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno, HandCard *handCard) :
-        PlayerState(std::move(name), remainingCardCount, isUno), handCard_(handCard)
+        PlayerState(std::move(name), remainingCardCount, isUno), handCard(handCard)
     {
-    }
-
-    template<typename... T>
-    void ServerPlayerState::draw(T... args)
-    {
-        this->handCard_->draw(args...);
     }
 
     ClientGameState::ClientGameState(GameStatus gameStatus, Player player) : GameState(gameStatus), player(std::move(player)) {}
 
     ServerGameState::ServerGameState() : GameState(GameStatus::WAITING_PLAYERS_TO_JOIN) {}
+
+    void ServerGameState::updateStateByCard(const Card &card)
+    {
+        if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront()) == false) {
+            throw std::invalid_argument("Card cannot be played");
+        }
+
+        const auto &handCardSet = this->getCurrentPlayer()->handCard->getCards();
+        for (auto it = handCardSet.begin(); it != handCardSet.end(); it++) {
+            if (card.getType() == it->getType() && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
+                this->getCurrentPlayer()->handCard->play(it);
+            }
+        }
+
+        GameState::updateStateByCard(card);
+    }
+
 
     void ServerGameState::updateStateByDraw()
     {
