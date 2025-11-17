@@ -107,6 +107,16 @@ namespace UNO::GAME {
         std::vector<PlayerStateType> players_;
         std::vector<PlayerStateType>::iterator currentPlayer_;
 
+        /**
+         * 反转
+         */
+        void reverse();
+
+        /**
+         * 下一个玩家
+         */
+        void nextPlayer();
+
     public:
         virtual ~GameState() = default;
         /**
@@ -136,19 +146,9 @@ namespace UNO::GAME {
         void addPlayer(PlayerStateType playerState);
 
         /**
-         * 下一个玩家
-         */
-        void nextPlayer();
-
-        /**
          * 清空玩家
          */
         void clearPlayers();
-
-        /**
-         * 反转
-         */
-        void reverse();
 
         /**
          * 由于用户出牌而改变状态
