@@ -87,7 +87,7 @@ namespace UNO::GAME {
         /**
          * @return 牌堆中最上方的牌
          */
-        Card getFront() const;
+        [[nodiscard]] Card getFront() const;
     };
 
     /**
