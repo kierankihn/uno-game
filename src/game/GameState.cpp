@@ -57,105 +57,6 @@ namespace UNO::GAME {
         this->handCard_->draw(args...);
     }
 
-    template<PlayerStateTypeConcept PlayerStateType>
-    GameState<PlayerStateType>::GameState(GameStatus gameStatus) :
-        gameStatus_(gameStatus), isReversed_(false), drawCount_(0), players_(), currentPlayer_(players_.begin())
-    {
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    const std::vector<PlayerStateType> &GameState<PlayerStateType>::getPlayers() const
-    {
-        return this->players_;
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    std::vector<PlayerStateType>::iterator GameState<PlayerStateType>::getCurrentPlayer() const
-    {
-        return this->currentPlayer_;
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    const DiscardPile &GameState<PlayerStateType>::getDiscardPile() const
-    {
-        return this->discardPile_;
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    bool GameState<PlayerStateType>::getIsReversed() const
-    {
-        return this->isReversed_;
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::addPlayer(PlayerStateType playerState)
-    {
-        this->currentPlayer_ = this->players_.push_back(std::move(playerState), this->currentPlayer_);
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::nextPlayer()
-    {
-        if (this->isReversed_ == false) {
-            if (this->currentPlayer_ == this->players_.end()) {
-                this->currentPlayer_ = std::next(this->currentPlayer_);
-                this->currentPlayer_ = this->players_.begin();
-            }
-        }
-        else {
-            if (this->currentPlayer_ == this->players_.begin()) {
-                this->currentPlayer_ = std::prev(this->players_.end());
-            }
-            else {
-                this->currentPlayer_ = std::prev(this->currentPlayer_);
-            }
-        }
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::clearPlayers()
-    {
-        this->players_.clear();
-        this->currentPlayer_ = this->players_.begin();
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::reverse()
-    {
-        this->isReversed_ ^= 1;
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::updateStateByCard(const Card &card)
-    {
-        if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront()) == false) {
-            throw std::invalid_argument("Card cannot be played");
-        }
-        this->currentPlayer_->setRemainingCardCount(this->currentPlayer_->getRemainingCardCount() - 1);
-        if (card.getType() == CardType::DRAW2) {
-            this->drawCount_ += 2;
-        }
-        if (card.getType() == CardType::WILDDRAWFOUR) {
-            this->drawCount_ += 4;
-        }
-        if (card.getType() == CardType::REVERSE) {
-            this->reverse();
-        }
-        if (card.getType() == CardType::SKIP) {
-            this->nextPlayer();
-        }
-        this->nextPlayer();
-        this->discardPile_.add(card);
-    }
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::updateStateByDraw()
-    {
-        if (this->drawCount_ != 0) {
-            this->drawCount_ = 0;
-        }
-    }
-
     ClientGameState::ClientGameState(GameStatus gameStatus, Player player) : GameState(gameStatus), player(std::move(player)) {}
 
     ServerGameState::ServerGameState() : GameState(GameStatus::WAITING_PLAYERS_TO_JOIN) {}
@@ -168,6 +69,4 @@ namespace UNO::GAME {
         this->currentPlayer_->draw(this->deck_.draw(this->drawCount_));
         this->drawCount_ = 0;
     }
-
-
 }   // namespace UNO::GAME
