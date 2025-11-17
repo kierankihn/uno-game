@@ -55,7 +55,7 @@ namespace UNO::GAME {
         CardType type_;
 
     public:
-        Card(CardColor color, CardType value);
+        Card(CardColor color, CardType type);
 
         /**
          * @return 卡牌的颜色
