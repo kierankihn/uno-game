@@ -285,7 +285,7 @@ namespace UNO::GAME {
     template<PlayerStateTypeConcept PlayerStateType>
     void GameState<PlayerStateType>::updateStateByCard(const Card &card)
     {
-        if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront()) == false) {
+        if (this->discardPile_.isEmpty() == false && card.canBePlayedOn(this->discardPile_.getFront(), this->drawCount_) == false) {
             throw std::invalid_argument("Card cannot be played");
         }
         this->currentPlayer_->play(card);

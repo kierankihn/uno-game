@@ -76,12 +76,13 @@ namespace UNO::GAME {
         return this->type_ < other.type_;
     }
 
-    bool Card::canBePlayedOn(const Card &other) const
+    bool Card::canBePlayedOn(const Card &other, size_t drawCount) const
     {
-        if (other.getType() == CardType::DRAW2 && this->type_ != CardType::DRAW2 && this->type_ != CardType::WILDDRAWFOUR) {
+        if (drawCount != 0 && other.getType() == CardType::DRAW2 && this->type_ != CardType::DRAW2
+            && this->type_ != CardType::WILDDRAWFOUR) {
             return false;
         }
-        if (other.getType() == CardType::WILDDRAWFOUR && this->type_ != CardType::WILDDRAWFOUR) {
+        if (drawCount != 0 && other.getType() == CardType::WILDDRAWFOUR && this->type_ != CardType::WILDDRAWFOUR) {
             return false;
         }
         if (this->type_ == CardType::WILD || this->type_ == CardType::WILDDRAWFOUR) {

@@ -91,7 +91,7 @@ namespace UNO::GAME {
          * @param other 另一张牌
          * @return 是否能在打出另一张牌后打出
          */
-        [[nodiscard]] bool canBePlayedOn(const Card &other) const;
+        [[nodiscard]] bool canBePlayedOn(const Card &other, size_t drawCount) const;
     };
 }   // namespace UNO::GAME
 
