@@ -204,18 +204,16 @@ namespace UNO::GAME {
     void GameState<PlayerStateType>::nextPlayer()
     {
         if (this->isReversed_ == false) {
+            this->currentPlayer_ = std::next(this->currentPlayer_);
             if (this->currentPlayer_ == this->players_.end()) {
-                this->currentPlayer_ = std::next(this->currentPlayer_);
                 this->currentPlayer_ = this->players_.begin();
             }
         }
         else {
             if (this->currentPlayer_ == this->players_.begin()) {
-                this->currentPlayer_ = std::prev(this->players_.end());
+                this->currentPlayer_ = this->players_.end();
             }
-            else {
-                this->currentPlayer_ = std::prev(this->currentPlayer_);
-            }
+            this->currentPlayer_ = std::prev(this->currentPlayer_);
         }
     }
 
