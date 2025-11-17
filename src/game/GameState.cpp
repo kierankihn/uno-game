@@ -42,7 +42,7 @@ namespace UNO::GAME {
     }
 
     ClientPlayerState::ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
-        PlayerState(name, remainingCardCount, isUno)
+        PlayerState(std::move(name), remainingCardCount, isUno)
     {
     }
 
