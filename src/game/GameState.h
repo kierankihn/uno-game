@@ -139,6 +139,8 @@ namespace UNO::GAME {
          */
         [[nodiscard]] bool getIsReversed() const;
 
+        [[nodiscard]] size_t getDrawCount() const;
+
         /**
          * 向对局中添加玩家
          * @param playerState 要添加的玩家状态
@@ -191,6 +193,13 @@ namespace UNO::GAME {
     {
         return this->isReversed_;
     }
+
+    template<PlayerStateTypeConcept PlayerStateType>
+    size_t GameState<PlayerStateType>::getDrawCount() const
+    {
+        return this->drawCount_;
+    }
+
 
     template<PlayerStateTypeConcept PlayerStateType>
     void GameState<PlayerStateType>::addPlayer(PlayerStateType playerState)
