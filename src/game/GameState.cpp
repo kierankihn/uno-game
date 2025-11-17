@@ -62,9 +62,13 @@ namespace UNO::GAME {
         }
 
         const auto &handCardSet = this->getCurrentPlayer()->handCard->getCards();
-        for (auto it = handCardSet.begin(); it != handCardSet.end(); it++) {
+        for (auto it = handCardSet.begin(); ; it++) {
+            if (it == handCardSet.end()) {
+                throw std::invalid_argument("Card not found in hand");
+            }
             if (card.getType() == it->getType() && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
                 this->getCurrentPlayer()->handCard->play(it);
+                break;
             }
         }
 
