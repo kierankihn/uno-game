@@ -40,10 +40,35 @@ namespace UNO::GAME {
         return cards_.empty();
     }
 
-    Player::Player(std::string name) : name_(std::move(name)), handCard(nullptr) {}
+    Player::Player(std::string name) : name_(std::move(name)) {}
 
     const std::string &Player::getName() const
     {
         return this->name_;
+    }
+
+    const std::multiset<Card> &Player::getCards() const
+    {
+        return this->handCard_.getCards();
+    }
+
+    void Player::draw(const Card &card)
+    {
+        this->handCard_.draw(card);
+    }
+
+    void Player::draw(const std::vector<Card> &cards)
+    {
+        this->handCard_.draw(cards);
+    }
+
+    bool Player::isEmpty() const
+    {
+        return this->handCard_.isEmpty();
+    }
+
+    Card Player::play(const std::multiset<Card>::iterator &it)
+    {
+        return this->handCard_.play(it);
     }
 }   // namespace UNO::GAME

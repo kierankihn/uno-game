@@ -97,7 +97,32 @@ namespace UNO::GAME {
         return this->handCard_.isEmpty();
     }
 
-    ClientGameState::ClientGameState(GameStatus gameStatus, Player player) : GameState(gameStatus), player(std::move(player)) {}
+    ClientGameState::ClientGameState(GameStatus gameStatus, std::string name) : GameState(gameStatus), player_(std::move(name)) {}
+
+    const std::multiset<Card> &ClientGameState::getCards() const
+    {
+        return this->player_.getCards();
+    }
+
+    void ClientGameState::draw(const Card &card)
+    {
+        this->player_.draw(card);
+    }
+
+    void ClientGameState::draw(const std::vector<Card> &cards)
+    {
+        this->player_.draw(cards);
+    }
+
+    Card ClientGameState::play(const std::multiset<Card>::iterator &it)
+    {
+        return this->player_.play(it);
+    }
+
+    bool ClientGameState::isEmpty() const
+    {
+        return this->player_.isEmpty();
+    }
 
     ServerGameState::ServerGameState() : GameState(GameStatus::WAITING_PLAYERS_TO_JOIN) {}
 

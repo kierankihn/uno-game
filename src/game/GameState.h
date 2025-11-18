@@ -317,10 +317,41 @@ namespace UNO::GAME {
     }
 
     class ClientGameState final : public GameState<ClientPlayerState> {
-    public:
-        Player player;
+    private:
+        Player player_;
 
-        ClientGameState(GameStatus gameStatus, Player player);
+    public:
+        ClientGameState(GameStatus gameStatus, std::string name);
+
+        /**
+         * 获得当前手牌
+         * @return 当前手牌的集合
+         */
+        [[nodiscard]] const std::multiset<Card> &getCards() const;
+
+        /**
+         * 摸一张牌
+         * @param card 摸的牌
+         */
+        void draw(const Card &card);
+
+        /**
+         * 摸多张牌
+         * @param cards 摸的牌
+         */
+        void draw(const std::vector<Card> &cards);
+
+        /**
+         * 打出一张牌
+         * @param it 要打出的手牌的迭代器
+         * @return 打出的手牌
+         */
+        Card play(const std::multiset<Card>::iterator &it);
+
+        /**
+         * @return 手牌是否为空
+         */
+        [[nodiscard]] bool isEmpty() const;
     };
 
     class ServerGameState final : public GameState<ServerPlayerState> {

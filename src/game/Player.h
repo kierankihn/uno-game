@@ -62,16 +62,45 @@ namespace UNO::GAME {
     class Player {
     private:
         std::string name_;
+        HandCard handCard_;
 
     public:
-        HandCard *handCard;
-
         explicit Player(std::string name);
 
         /**
          * @return 返回玩家名字
          */
         [[nodiscard]] const std::string &getName() const;
+
+        /**
+         * 获得当前手牌
+         * @return 当前手牌的集合
+         */
+        [[nodiscard]] const std::multiset<Card> &getCards() const;
+
+        /**
+         * 摸一张牌
+         * @param card 摸的牌
+         */
+        void draw(const Card &card);
+
+        /**
+         * 摸多张牌
+         * @param cards 摸的牌
+         */
+        void draw(const std::vector<Card> &cards);
+
+        /**
+         * 打出一张牌
+         * @param it 要打出的手牌的迭代器
+         * @return 打出的手牌
+         */
+        Card play(const std::multiset<Card>::iterator &it);
+
+        /**
+         * @return 手牌是否为空
+         */
+        [[nodiscard]] bool isEmpty() const;
     };
 }   // namespace UNO::GAME
 

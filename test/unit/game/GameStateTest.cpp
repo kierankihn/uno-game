@@ -13,11 +13,7 @@
 
 TEST(game_state_test, game_state_test_1)
 {
-    UNO::GAME::HandCard handCard;
-    UNO::GAME::Player player(std::string("lzh"));
-    player.handCard = &handCard;
-
-    UNO::GAME::ClientGameState clientGameState(UNO::GAME::GameStatus::WAITING_PLAYERS_TO_NEXT_TURN, player);
+    UNO::GAME::ClientGameState clientGameState(UNO::GAME::GameStatus::WAITING_PLAYERS_TO_NEXT_TURN, std::string("lzh"));
 
     UNO::GAME::ClientPlayerState playerState1("pkq", 100, false);
     UNO::GAME::ClientPlayerState playerState2("kpq", 100, false);
