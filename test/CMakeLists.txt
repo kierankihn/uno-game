@@ -5,7 +5,8 @@ set(CMAKE_CXX_STANDARD 26)
 
 project(uno-game-test)
 
-add_executable(uno-game-test unit/game/CardTest.cpp
+add_executable(uno-game-test
+        unit/game/CardTest.cpp
         unit/game/CardTileTest.cpp
         unit/game/PlayerTest.cpp
         unit/game/GameStateTest.cpp
