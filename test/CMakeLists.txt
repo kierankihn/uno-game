@@ -10,6 +10,7 @@ add_executable(uno-game-test
         unit/game/CardTileTest.cpp
         unit/game/PlayerTest.cpp
         unit/game/GameStateTest.cpp
+        unit/network/MessageSerializerTest.cpp
 )
 
 target_link_libraries(uno-game-test
