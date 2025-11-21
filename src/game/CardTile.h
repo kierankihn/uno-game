@@ -30,22 +30,22 @@ namespace UNO::GAME {
         void pushFront(T... t);
 
         /**
-        * 向牌堆后加入卡牌
-        * @param t 要加入的卡牌
-        */
+         * 向牌堆后加入卡牌
+         * @param t 要加入的卡牌
+         */
         template<typename... T>
         void pushBack(T... t);
 
         /**
-        * 将牌堆中第一张牌删除
-        * @return 删除的牌
-        */
+         * 将牌堆中第一张牌删除
+         * @return 删除的牌
+         */
         Card popFront();
 
         /**
-        * 将牌堆中最后一张牌删除
-        * @return 删除的牌
-        */
+         * 将牌堆中最后一张牌删除
+         * @return 删除的牌
+         */
         Card popBack();
 
         /**
@@ -60,6 +60,8 @@ namespace UNO::GAME {
 
     public:
         CardTile();
+
+        [[nodiscard]] const std::deque<Card> &getCards() const;
 
         /**
          * @return 牌堆是否为空
@@ -115,6 +117,6 @@ namespace UNO::GAME {
          */
         std::vector<Card> draw(size_t n);
     };
-}
+}   // namespace UNO::GAME
 
-#endif //UNO_GAME_CARDTILE_H
+#endif   // UNO_GAME_CARDTILE_H

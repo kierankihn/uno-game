@@ -4,6 +4,7 @@ project(uno-game)
 set(CMAKE_CXX_STANDARD 26)
 
 find_package(ftxui CONFIG REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 add_library(uno-game-lib
         src/game/Card.cpp
@@ -12,15 +13,19 @@ add_library(uno-game-lib
         src/game/GameState.cpp
         src/common/Utils.cpp
         src/network/Message.cpp
+        src/network/MessageSerializer.cpp
+)
+target_link_libraries(uno-game-lib
+        PRIVATE ftxui::screen
+        PRIVATE ftxui::dom
+        PRIVATE ftxui::component
+)
+target_link_libraries(uno-game-lib
+        PRIVATE nlohmann_json::nlohmann_json
 )
 
 add_executable(uno-game src/main.cpp)
 target_link_libraries(uno-game
         PRIVATE uno-game-lib)
-target_link_libraries(uno-game
-        PRIVATE ftxui::screen
-        PRIVATE ftxui::dom
-        PRIVATE ftxui::component
-)
 
 add_subdirectory(test)

@@ -44,6 +44,12 @@ namespace UNO::GAME {
         return cards_.front();
     }
 
+    const std::deque<Card> &CardTile::getCards() const
+    {
+        return this->cards_;
+    }
+
+
     bool CardTile::isEmpty() const
     {
         return cards_.empty();
