@@ -11,6 +11,7 @@ add_library(uno-game-lib
         src/game/Player.cpp
         src/game/GameState.cpp
         src/common/Utils.cpp
+        src/network/Message.cpp
 )
 
 add_executable(uno-game src/main.cpp)
