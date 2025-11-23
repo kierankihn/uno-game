@@ -1,5 +1,5 @@
 /**
- * @file
+ * @file MessageSerializer.h
  *
  * @author Yuzhe Guo
  * @date 2025.11.20
@@ -19,6 +19,10 @@ namespace UNO::NETWORK {
 
     private:
         static nlohmann::json serializeCard(const GAME::Card &card);
+
+        template<typename Iterator>
+        static nlohmann::json serializeCards(Iterator begin, Iterator end);
+
         static nlohmann::json serializeDiscardPile(const GAME::DiscardPile &discardPile);
         static nlohmann::json serializeHandCard(const GAME::HandCard &handCard);
 
@@ -31,6 +35,7 @@ namespace UNO::NETWORK {
         static nlohmann::json serializePayload(const EndGamePayload &payload);
 
         static std::string serializeMessagePayloadType(const MessagePayloadType &messagePayloadType);
+        static std::string serializeMessageStatus(const MessageStatus &messageStatus);
 
         static nlohmann::json serializeMessage(const Message &message);
 
@@ -40,7 +45,7 @@ namespace UNO::NETWORK {
         static GAME::DiscardPile deserializeDiscardPile(const nlohmann::json &discardPile);
         static GAME::HandCard deserializeHandCard(const nlohmann::json &handCard);
 
-        static std::monostate deserializeMonostatePayload(const nlohmann::json &payload);
+        static std::monostate deserializeEmptyPayload(const nlohmann::json &payload);
         static JoinGamePayload deserializeJoinGamePayload(const nlohmann::json &payload);
         static StartGamePayload deserializeStartGamePayload(const nlohmann::json &payload);
         static PlayCardPayload deserializePlayCardPayload(const nlohmann::json &payload);
@@ -49,6 +54,8 @@ namespace UNO::NETWORK {
         static EndGamePayload deserializeEndGamePayload(const nlohmann::json &payload);
 
         static MessagePayloadType deserializeMessagePayloadType(const std::string &messagePayloadType);
+        static MessageStatus deserializeMessageStatus(const std::string &messageStatus);
+
         static Message deserializeMessage(const nlohmann::json &message);
     };
 

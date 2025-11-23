@@ -26,6 +26,7 @@ namespace UNO::NETWORK {
 
     struct DrawCardPayload {
         int drawCount;
+        std::vector<GAME::Card> cards;
     };
 
     struct PlayCardPayload {
