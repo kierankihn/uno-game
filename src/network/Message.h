@@ -16,7 +16,7 @@
 
 
 namespace UNO::NETWORK {
-    enum class MessagePayloadType { JOIN_GAME, START_GAME, DRAW_CARD, PLAY_CARD, INIT_GAME, END_GAME };
+    enum class MessagePayloadType { EMPTY, JOIN_GAME, START_GAME, DRAW_CARD, PLAY_CARD, INIT_GAME, END_GAME };
 
     struct JoinGamePayload {
         std::string playerName;
@@ -43,14 +43,19 @@ namespace UNO::NETWORK {
     using MessagePayload =
         std::variant<std::monostate, JoinGamePayload, StartGamePayload, DrawCardPayload, PlayCardPayload, InitGamePayload, EndGamePayload>;
 
+    enum class MessageStatus { OK, INVALID };
+
     class Message {
     private:
+        MessageStatus status_;
+
         MessagePayloadType messagePayloadType_;
         MessagePayload messagePayload_;
 
     public:
-        Message(MessagePayloadType messagePayloadType, MessagePayload messagePayload);
+        Message(MessageStatus messageStatus, MessagePayloadType messagePayloadType, MessagePayload messagePayload);
 
+        [[nodiscard]] MessageStatus getMessageStatus() const;
         [[nodiscard]] MessagePayloadType getMessagePayloadType() const;
         [[nodiscard]] MessagePayload getMessagePayload() const;
     };
