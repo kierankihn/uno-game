@@ -24,10 +24,6 @@ namespace UNO::GAME {
 
     std::string Card::colorToString() const
     {
-        switch (this->type_) {
-            case CardType::WILD:
-            case CardType::WILDDRAWFOUR: return "Wild";
-        }
         switch (this->color_) {
             case CardColor::RED: return "Red";
             case CardColor::GREEN: return "Green";
