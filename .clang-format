@@ -48,7 +48,7 @@ AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
 
 # 允许短的if语句保持在同一行
-AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortIfStatementsOnASingleLine: Never
 
 # 允许短的循环保持在同一行
 AllowShortLoopsOnASingleLine: true
@@ -200,3 +200,5 @@ TabWidth: 4
 
 # 使用tab字符: Never, ForIndentation, ForContinuationAndIndentation, Always
 UseTab: Never
+
+InsertBraces: true
