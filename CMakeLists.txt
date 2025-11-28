@@ -16,6 +16,7 @@ add_library(uno-game-lib
         src/network/Message.cpp
         src/network/MessageSerializer.cpp
         src/network/NetworkServer.cpp
+        src/network/NetworkClient.cpp
 )
 target_link_libraries(uno-game-lib
         PRIVATE ftxui::screen
