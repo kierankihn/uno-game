@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 26)
 
 find_package(ftxui CONFIG REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(asio REQUIRED)
 
 add_library(uno-game-lib
         src/game/Card.cpp
@@ -14,6 +15,7 @@ add_library(uno-game-lib
         src/common/Utils.cpp
         src/network/Message.cpp
         src/network/MessageSerializer.cpp
+        src/network/NetworkServer.cpp
 )
 target_link_libraries(uno-game-lib
         PRIVATE ftxui::screen
@@ -22,6 +24,9 @@ target_link_libraries(uno-game-lib
 )
 target_link_libraries(uno-game-lib
         PRIVATE nlohmann_json::nlohmann_json
+)
+target_link_libraries(uno-game-lib
+        PRIVATE asio::asio
 )
 
 add_executable(uno-game src/main.cpp)
