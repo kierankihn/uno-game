@@ -16,10 +16,19 @@ namespace UNO::NETWORK {
 
     void NetworkClient::connect(const std::string &host, uint16_t port)
     {
+        this->disconnect();
         asio::ip::tcp::resolver resolver(io_context_);
         auto endpoints = resolver.resolve(host, std::to_string(port));
         asio::connect(socket_, endpoints.begin(), endpoints.end());
     }
+
+    void NetworkClient::disconnect()
+    {
+        if (socket_.is_open()) {
+            this->socket_.close();
+        }
+    }
+
 
     void NetworkClient::send(const std::string &message)
     {

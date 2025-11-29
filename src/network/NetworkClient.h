@@ -27,6 +27,11 @@ namespace UNO::NETWORK {
         void connect(const std::string &host, uint16_t port);
 
         /**
+         * 关闭到服务端的连接
+         */
+        void disconnect();
+
+        /**
          * 向服务端发送消息
          * @param message 要发送的消息
          */
