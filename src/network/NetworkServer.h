@@ -70,6 +70,11 @@ namespace UNO::NETWORK {
          */
         void run();
 
+        /**
+         * 停止网络进程
+         */
+        void stop();
+
     private:
         void accept();
     };

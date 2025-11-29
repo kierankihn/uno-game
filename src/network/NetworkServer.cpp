@@ -86,4 +86,10 @@ namespace UNO::NETWORK {
     {
         this->io_context_.run();
     }
+
+    void NetworkServer::stop()
+    {
+        this->acceptor_.close();
+        this->io_context_.stop();
+    }
 }   // namespace UNO::NETWORK
