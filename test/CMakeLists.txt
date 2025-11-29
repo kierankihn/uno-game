@@ -11,6 +11,8 @@ add_executable(uno-game-test
         unit/game/PlayerTest.cpp
         unit/game/GameStateTest.cpp
         unit/network/MessageSerializerTest.cpp
+        unit/network/NetworkServerTest.cpp
+        unit/network/NetworkClientTest.cpp
 )
 
 target_link_libraries(uno-game-test
