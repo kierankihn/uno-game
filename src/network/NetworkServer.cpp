@@ -27,9 +27,9 @@ namespace UNO::NETWORK {
 
     void Session::read()
     {
-        size_t messageLength;
+        auto messageLength = std::make_shared<size_t>(0);
         asio::async_read(socket_,
-                         asio::buffer(&messageLength, sizeof(messageLength)),
+                         asio::buffer(messageLength.get(), sizeof(size_t)),
                          [this, self = shared_from_this(), messageLength](const asio::error_code &ec, size_t length) {
                              if (!ec) {
                                  if (messageLength > 0 && messageLength <= 10 * 1024 * 1024) {
