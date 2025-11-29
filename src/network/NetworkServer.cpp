@@ -60,6 +60,7 @@ namespace UNO::NETWORK {
         this->acceptor_.async_accept([this](const asio::error_code &ec, asio::ip::tcp::socket socket) {
             if (!ec) {
                 this->addPlayer(std::move(socket));
+                accept();
             }
         });
     }
@@ -67,6 +68,7 @@ namespace UNO::NETWORK {
     NetworkServer::NetworkServer(uint16_t port, std::function<void(size_t, std::string)> callback) :
         acceptor_(io_context_, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), playerCount(0), callback_(std::move(callback))
     {
+        accept();
     }
 
     void NetworkServer::addPlayer(asio::ip::tcp::socket socket)
