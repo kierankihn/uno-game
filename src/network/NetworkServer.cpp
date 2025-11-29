@@ -32,8 +32,11 @@ namespace UNO::NETWORK {
                          asio::buffer(messageLength.get(), sizeof(size_t)),
                          [this, self = shared_from_this(), messageLength](const asio::error_code &ec, size_t length) {
                              if (!ec) {
-                                 if (messageLength > 0 && messageLength <= 10 * 1024 * 1024) {
-                                     this->readBody(messageLength);
+                                 if (*messageLength <= 10 * 1024 * 1024) {
+                                     this->readBody(*messageLength);
+                                 }
+                                 else {
+                                     read();
                                  }
                              }
                          });
