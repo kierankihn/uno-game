@@ -19,10 +19,10 @@ namespace UNO::NETWORK {
 
     void Session::send(const std::string &message)
     {
-        auto buffer = std::make_shared<std::string>(message);
-        asio::async_write(socket_, asio::buffer(*buffer), [this, self = shared_from_this(), buffer](const asio::error_code &ec, size_t) {
-            if (ec) {}
-        });
+        auto length                               = std::make_shared<size_t>(message.size());
+        auto msg                                  = std::make_shared<std::string>(message);
+        std::array<asio::const_buffer, 2> buffers = {asio::buffer(length.get(), sizeof(size_t)), asio::buffer(*msg)};
+        asio::async_write(socket_, buffers, [this, self = shared_from_this(), length, msg](const asio::error_code &ec, size_t) {});
     }
 
     void Session::read()
