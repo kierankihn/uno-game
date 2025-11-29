@@ -50,6 +50,7 @@ namespace UNO::NETWORK {
                 if (!ec) {
                     std::string message = {buffer->begin(), buffer->end()};
                     this->callback_(this->player_id_, message);
+                    read();
                 }
             });
     }
