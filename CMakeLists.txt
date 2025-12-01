@@ -7,8 +7,6 @@ find_package(ftxui CONFIG REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
 
-find_package(ftxui REQUIRED)
-
 # 移除 /utf-8 选项
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
     foreach (component screen dom component)
@@ -30,6 +28,8 @@ add_library(uno-game-lib
         src/network/MessageSerializer.cpp
         src/network/NetworkServer.cpp
         src/network/NetworkClient.cpp
+        src/client/UnoClient.cpp
+        src/server/UnoServer.cpp
 )
 target_link_libraries(uno-game-lib
         PRIVATE ftxui::screen
@@ -43,8 +43,12 @@ target_link_libraries(uno-game-lib
         PRIVATE asio::asio
 )
 
-add_executable(uno-game src/main.cpp)
-target_link_libraries(uno-game
+add_executable(uno-client src/client/main.cpp)
+target_link_libraries(uno-client
+        PRIVATE uno-game-lib)
+
+add_executable(uno-server src/server/main.cpp)
+target_link_libraries(uno-server
         PRIVATE uno-game-lib)
 
 add_subdirectory(test)
