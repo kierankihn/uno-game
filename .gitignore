@@ -3,6 +3,7 @@
 
 build/
 cmake-build-debug/
+cmake-build-debug-with-coverage/
 cmake-build-release/
 
 .cache/
