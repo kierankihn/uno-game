@@ -7,6 +7,19 @@ find_package(ftxui CONFIG REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
 
+find_package(ftxui REQUIRED)
+
+# 移除 /utf-8 选项
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
+    foreach (component screen dom component)
+        get_target_property(FTXUI_COMPILE_OPTIONS ftxui::${component} INTERFACE_COMPILE_OPTIONS)
+        if (FTXUI_COMPILE_OPTIONS)
+            list(REMOVE_ITEM FTXUI_COMPILE_OPTIONS "/utf-8")
+            set_target_properties(ftxui::${component} PROPERTIES INTERFACE_COMPILE_OPTIONS "${FTXUI_COMPILE_OPTIONS}")
+        endif ()
+    endforeach ()
+endif ()
+
 add_library(uno-game-lib
         src/game/Card.cpp
         src/game/CardTile.cpp
