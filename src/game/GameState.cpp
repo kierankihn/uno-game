@@ -146,13 +146,15 @@ namespace UNO::GAME {
         }
     }
 
-    void ServerGameState::updateStateByDraw()
+    std::vector<Card> ServerGameState::updateStateByDraw()
     {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
         }
-        this->currentPlayer_->draw(this->drawCount_, deck_.draw(this->drawCount_));
+        auto cards = deck_.draw(this->drawCount_);
+        this->currentPlayer_->draw(this->drawCount_, cards);
         this->drawCount_ = 0;
         this->nextPlayer();
+        return cards;
     }
 }   // namespace UNO::GAME

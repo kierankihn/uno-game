@@ -193,7 +193,7 @@ namespace UNO::GAME {
         /**
          * 由于用户摸牌而改变状态
          */
-        void virtual updateStateByDraw();
+        std::vector<Card> virtual updateStateByDraw();
     };
 
     template<PlayerStateTypeConcept PlayerStateType>
@@ -294,7 +294,7 @@ namespace UNO::GAME {
     }
 
     template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::updateStateByDraw()
+    std::vector<Card> GameState<PlayerStateType>::updateStateByDraw()
     {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
@@ -302,6 +302,7 @@ namespace UNO::GAME {
         this->currentPlayer_->draw(this->drawCount_, {});
         this->drawCount_ = 0;
         this->nextPlayer();
+        return {};
     }
 
     class ClientGameState final : public GameState<ClientPlayerState> {
@@ -309,7 +310,7 @@ namespace UNO::GAME {
         Player player_;
 
     public:
-        ClientGameState(std::string name);
+        explicit ClientGameState(std::string name);
 
         /**
          * 获得当前手牌
@@ -357,7 +358,7 @@ namespace UNO::GAME {
         /**
          * 由于用户摸牌而改变状态
          */
-        void updateStateByDraw() override;
+        std::vector<Card> updateStateByDraw() override;
     };
 }   // namespace UNO::GAME
 
