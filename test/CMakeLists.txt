@@ -16,7 +16,7 @@ add_executable(uno-game-test
 )
 
 target_link_libraries(uno-game-test
-        PUBLIC uno-game-lib
+        PRIVATE uno-game-lib
 )
 target_link_libraries(uno-game-test
         PRIVATE GTest::gtest

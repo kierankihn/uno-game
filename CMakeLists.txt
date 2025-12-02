@@ -32,15 +32,15 @@ add_library(uno-game-lib
         src/server/UnoServer.cpp
 )
 target_link_libraries(uno-game-lib
-        PRIVATE ftxui::screen
-        PRIVATE ftxui::dom
-        PRIVATE ftxui::component
+        PUBLIC ftxui::screen
+        PUBLIC ftxui::dom
+        PUBLIC ftxui::component
 )
 target_link_libraries(uno-game-lib
-        PRIVATE nlohmann_json::nlohmann_json
+        PUBLIC nlohmann_json::nlohmann_json
 )
 target_link_libraries(uno-game-lib
-        PRIVATE asio::asio
+        PUBLIC asio::asio
 )
 
 add_executable(uno-client src/client/main.cpp)
