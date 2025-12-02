@@ -35,7 +35,7 @@ namespace UNO::NETWORK {
 
     struct InitGamePayload {
         GAME::DiscardPile discardPile;
-        GAME::HandCard handCard;
+        std::multiset<GAME::Card> handCard;
         size_t currentPlayerIndex;
     };
 

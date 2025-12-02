@@ -24,7 +24,6 @@ namespace UNO::NETWORK {
         static nlohmann::json serializeCards(Iterator begin, Iterator end);
 
         static nlohmann::json serializeDiscardPile(const GAME::DiscardPile &discardPile);
-        static nlohmann::json serializeHandCard(const GAME::HandCard &handCard);
 
         static nlohmann::json serializePayload(const std::monostate &payload);
         static nlohmann::json serializePayload(const JoinGamePayload &payload);
@@ -43,7 +42,7 @@ namespace UNO::NETWORK {
         static GAME::CardType deserializeCardType(const std::string &cardType);
         static GAME::Card deserializeCard(const nlohmann::json &card);
         static GAME::DiscardPile deserializeDiscardPile(const nlohmann::json &discardPile);
-        static GAME::HandCard deserializeHandCard(const nlohmann::json &handCard);
+        static std::multiset<GAME::Card> deserializeHandCard(const nlohmann::json &handCard);
 
         static std::monostate deserializeEmptyPayload(const nlohmann::json &payload);
         static JoinGamePayload deserializeJoinGamePayload(const nlohmann::json &payload);

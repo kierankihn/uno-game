@@ -28,12 +28,6 @@ namespace UNO::NETWORK {
         return serializeCards(cards.begin(), cards.end());
     }
 
-    nlohmann::json MessageSerializer::serializeHandCard(const GAME::HandCard &handCard)
-    {
-        const auto &cards = handCard.getCards();
-        return serializeCards(cards.begin(), cards.end());
-    }
-
     nlohmann::json MessageSerializer::serializePayload(const std::monostate &payload)
     {
         return nullptr;
@@ -62,7 +56,7 @@ namespace UNO::NETWORK {
     nlohmann::json MessageSerializer::serializePayload(const InitGamePayload &payload)
     {
         return {{"discard_pile", serializeDiscardPile(payload.discardPile)},
-                {"hand_card", serializeHandCard(payload.handCard)},
+                {"hand_card", serializeCards(payload.handCard.begin(), payload.handCard.end())},
                 {"current_player", payload.currentPlayerIndex}};
     }
 
@@ -206,15 +200,15 @@ namespace UNO::NETWORK {
         return res;
     }
 
-    GAME::HandCard MessageSerializer::deserializeHandCard(const nlohmann::json &handCard)
+    std::multiset<GAME::Card> MessageSerializer::deserializeHandCard(const nlohmann::json &handCard)
     {
         if (handCard.is_array() == false) {
             throw std::invalid_argument("Invalid hand_card format: expected JSON array");
         }
 
-        GAME::HandCard res;
+        std::multiset<GAME::Card> res;
         for (const auto &i : std::views::reverse(handCard)) {
-            res.draw(deserializeCard(i));
+            res.insert(deserializeCard(i));
         }
 
         return res;
