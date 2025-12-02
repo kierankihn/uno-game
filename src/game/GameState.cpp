@@ -97,7 +97,7 @@ namespace UNO::GAME {
         return this->handCard_.isEmpty();
     }
 
-    ClientGameState::ClientGameState(GameStatus gameStatus, std::string name) : GameState(gameStatus), player_(std::move(name)) {}
+    ClientGameState::ClientGameState(std::string name) : player_(std::move(name)) {}
 
     const std::multiset<Card> &ClientGameState::getCards() const
     {
@@ -124,13 +124,19 @@ namespace UNO::GAME {
         return this->player_.isEmpty();
     }
 
-    ServerGameState::ServerGameState() : GameState(GameStatus::WAITING_PLAYERS_TO_JOIN) {}
+    ServerGameState::ServerGameState() = default;
 
     void ServerGameState::init()
     {
         deck_.clear(), discardPile_.clear();
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
             discardPile_.add(deck_.draw());
+        }
+
+        for (auto &player : this->players_) {
+            while (player.isEmpty() == false) {
+                player.play(*player.getCards().begin());
+            }
         }
 
         for (size_t i = 0; i < 7; i++) {

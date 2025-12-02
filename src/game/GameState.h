@@ -120,16 +120,6 @@ namespace UNO::GAME {
     };
 
     /**
-     * 游戏状态
-     */
-    enum class GameStatus : uint8_t {
-        WAITING_PLAYERS_TO_JOIN,
-        WAITING_PLAYERS_TO_START,
-        WAITING_PLAYERS_TO_NEXT_TURN,
-        WAITING_PLAYERS_TO_NEXT_ROUND
-    };
-
-    /**
      * 保证模板使用的是 PlayerState 的派生类
      */
     template<typename PlayerStateType>
@@ -142,8 +132,7 @@ namespace UNO::GAME {
     template<PlayerStateTypeConcept PlayerStateType>
     class GameState {
     protected:
-        explicit GameState(GameStatus gameStatus);
-        GameStatus gameStatus_;
+        explicit GameState();
         DiscardPile discardPile_;
         bool isReversed_;
         size_t drawCount_;
@@ -208,8 +197,7 @@ namespace UNO::GAME {
     };
 
     template<PlayerStateTypeConcept PlayerStateType>
-    GameState<PlayerStateType>::GameState(GameStatus gameStatus) :
-        gameStatus_(gameStatus), isReversed_(false), drawCount_(0), players_(), currentPlayer_(players_.begin())
+    GameState<PlayerStateType>::GameState() : isReversed_(false), drawCount_(0), players_(), currentPlayer_(players_.begin())
     {
     }
 
@@ -321,7 +309,7 @@ namespace UNO::GAME {
         Player player_;
 
     public:
-        ClientGameState(GameStatus gameStatus, std::string name);
+        ClientGameState(std::string name);
 
         /**
          * 获得当前手牌
