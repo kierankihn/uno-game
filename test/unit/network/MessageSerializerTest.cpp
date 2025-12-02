@@ -195,7 +195,7 @@ TEST(MessageSerializerTest, SerializeInitGameMessage)
     handCard.draw(Card(CardColor::GREEN, CardType::NUM3));
     handCard.draw(Card(CardColor::YELLOW, CardType::REVERSE));
 
-    InitGamePayload payload{discardPile, handCard, 2};
+    InitGamePayload payload{discardPile, handCard.getCards(), 2};
     Message message(MessageStatus::OK, MessagePayloadType::INIT_GAME, payload);
 
     std::string result  = MessageSerializer::serialize(message);
@@ -215,7 +215,7 @@ TEST(MessageSerializerTest, SerializeInitGameMessageWithEmptyPiles)
     DiscardPile discardPile;
     HandCard handCard;
 
-    InitGamePayload payload{discardPile, handCard, 0};
+    InitGamePayload payload{discardPile, handCard.getCards(), 0};
     Message message(MessageStatus::OK, MessagePayloadType::INIT_GAME, payload);
 
     std::string result  = MessageSerializer::serialize(message);
