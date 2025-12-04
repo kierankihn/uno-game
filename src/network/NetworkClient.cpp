@@ -15,18 +15,28 @@ namespace UNO::NETWORK {
 
     void NetworkClient::connect(const std::string &host, uint16_t port)
     {
+        io_context_.restart();
         asio::ip::tcp::socket socket(io_context_);
-
         asio::ip::tcp::resolver resolver(io_context_);
         auto endpoints = resolver.resolve(host, std::to_string(port));
-
+        asio::connect(socket, endpoints);
         this->session_ = std::make_shared<Session>(std::move(socket));
         this->session_->start(callback_);
     }
 
 
-    void NetworkClient::send(const std::string &message) const
+    void NetworkClient::send(const std::string &message)
     {
-        this->session_->send(message);
+        asio::post(io_context_, [session = this->session_, message]() { session->send(message); });
+    }
+
+    void NetworkClient::run()
+    {
+        this->io_context_.run();
+    }
+
+    void NetworkClient::stop()
+    {
+        this->io_context_.stop();
     }
 }   // namespace UNO::NETWORK

@@ -32,8 +32,17 @@ namespace UNO::NETWORK {
          * 向服务端发送消息
          * @param message 要发送的消息
          */
-        void send(const std::string &message) const;
+        void send(const std::string &message);
+
+        /**
+         * 启动网络事件循环
+         */
+        void run();
+
+        /**
+         * 停止网络事件循环
+         */
+        void stop();
     };
 
 }   // namespace UNO::NETWORK
-
