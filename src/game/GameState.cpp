@@ -157,4 +157,19 @@ namespace UNO::GAME {
         this->nextPlayer();
         return cards;
     }
+
+    void ServerGameState::reset()
+    {
+        discardPile_.clear();
+        isReversed_ = false;
+        drawCount_  = 0;
+
+        for (auto &player : players_) {
+            while (!player.isEmpty()) {
+                player.play(*player.getCards().begin());
+            }
+        }
+
+        currentPlayer_ = players_.begin();
+    }
 }   // namespace UNO::GAME

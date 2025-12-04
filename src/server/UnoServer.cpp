@@ -90,10 +90,40 @@ namespace UNO::SERVER {
     void UnoServer::handlePlayCard(size_t playerId, GAME::Card card)
     {
         this->serverGameState_.updateStateByCard(card);
+
+        // 检查是否有玩家获胜（手牌为空）
+        bool gameEnded = false;
+        for (const auto &player : this->serverGameState_.getPlayers()) {
+            if (player.isEmpty()) {
+                gameEnded = true;
+                break;
+            }
+        }
+
         NETWORK::PlayCardPayload payload = {card};
         auto message = NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::PLAY_CARD, payload});
         for (size_t i = 0; i < playerCount; i++) {
             this->networkServer_.send(gameIdToNetworkId.at(i), message);
+        }
+
+        if (gameEnded) {
+            this->handleEndGame();
+        }
+    }
+
+    void UnoServer::handleEndGame()
+    {
+        NETWORK::EndGamePayload payload{};
+        auto message = NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::END_GAME, payload});
+
+        for (size_t i = 0; i < playerCount; i++) {
+            this->networkServer_.send(gameIdToNetworkId.at(i), message);
+        }
+
+        this->serverGameState_.reset();
+
+        for (size_t i = 0; i < playerCount; i++) {
+            this->isReadyToStart[i] = false;
         }
     }
 

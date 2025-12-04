@@ -46,6 +46,11 @@ namespace UNO::SERVER {
          */
         void handlePlayCard(size_t playerId, GAME::Card card);
 
+        /**
+         * 处理游戏结束事件
+         */
+        void handleEndGame();
+
     public:
         explicit UnoServer(uint16_t port = 10001);
 

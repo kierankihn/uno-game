@@ -359,6 +359,11 @@ namespace UNO::GAME {
          * 由于用户摸牌而改变状态
          */
         std::vector<Card> updateStateByDraw() override;
+
+        /**
+         * 重置游戏状态（用于重新开始）
+         */
+        void reset();
     };
 }   // namespace UNO::GAME
 
