@@ -55,7 +55,8 @@ namespace UNO::NETWORK {
 
     nlohmann::json MessageSerializer::serializePayload(const InitGamePayload &payload)
     {
-        return {{"discard_pile", serializeDiscardPile(payload.discardPile)},
+        return {{"player_id", payload.playerId},
+                {"discard_pile", serializeDiscardPile(payload.discardPile)},
                 {"hand_card", serializeCards(payload.handCard.begin(), payload.handCard.end())},
                 {"current_player", payload.currentPlayerIndex}};
     }
@@ -291,10 +292,14 @@ namespace UNO::NETWORK {
             if (payload.is_object() == false) {
                 throw std::invalid_argument("Invalid INIT_GAME payload: expected JSON object");
             }
+            if (payload.at("player_id").is_number_unsigned() == false) {
+                throw std::invalid_argument("Invalid 'player_id' field in INIT_GAME payload: expected unsigned interger");
+            }
             if (payload.at("current_player").is_number_unsigned() == false) {
                 throw std::invalid_argument("Invalid 'current_player' field in INIT_GAME payload: expected unsigned integer");
             }
-            return {deserializeDiscardPile(payload.at("discard_pile")),
+            return {payload.at("player_id"),
+                    deserializeDiscardPile(payload.at("discard_pile")),
                     deserializeHandCard(payload.at("hand_card")),
                     payload.at("current_player")};
         }
