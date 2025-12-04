@@ -62,7 +62,7 @@ namespace UNO::SERVER {
     {
         serverGameState_.init();
         for (size_t i = 0; i < playerCount; i++) {
-            NETWORK::InitGamePayload payload = {serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), 0};
+            NETWORK::InitGamePayload payload = {i, serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), 0};
             this->networkServer_.send(
                 gameIdToNetworkId.at(i),
                 NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::INIT_GAME, payload}));
