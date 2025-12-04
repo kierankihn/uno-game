@@ -319,6 +319,11 @@ namespace UNO::GAME {
         [[nodiscard]] const std::multiset<Card> &getCards() const;
 
         /**
+         * 初始化客户端状态
+         */
+        void init(DiscardPile discardPile);
+
+        /**
          * 摸一张牌
          * @param card 摸的牌
          */

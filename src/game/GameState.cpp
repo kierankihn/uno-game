@@ -6,6 +6,7 @@
  */
 #include "GameState.h"
 
+#include <ranges>
 #include <stdexcept>
 #include <utility>
 
@@ -103,6 +104,12 @@ namespace UNO::GAME {
     {
         return this->player_.getCards();
     }
+
+    void ClientGameState::init(DiscardPile discardPile)
+    {
+        this->discardPile_ = std::move(discardPile);
+    }
+
 
     void ClientGameState::draw(const Card &card)
     {
