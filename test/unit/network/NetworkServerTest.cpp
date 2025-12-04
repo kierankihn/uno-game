@@ -445,7 +445,7 @@ TEST(SessionTest, SessionCreation)
     asio::io_context io_context;
     asio::ip::tcp::socket socket(io_context);
 
-    EXPECT_NO_THROW({ Session session(0, std::move(socket)); });
+    EXPECT_NO_THROW({ Session session(std::move(socket)); });
 }
 
 TEST(SessionTest, SessionStartWithCallback)
@@ -453,11 +453,55 @@ TEST(SessionTest, SessionStartWithCallback)
     asio::io_context io_context;
     asio::ip::tcp::socket socket(io_context);
 
-    auto session = std::make_shared<Session>(0, std::move(socket));
+    auto session = std::make_shared<Session>(std::move(socket));
 
-    auto callback = [](size_t player_id, std::string message) {};
+    auto callback = [](std::string message) {};
 
     EXPECT_NO_THROW({ session->start(callback); });
+}
+
+TEST(SessionTest, SessionInvokesCallbackOnIncomingMessage)
+{
+    asio::io_context server_context;
+    asio::ip::tcp::acceptor acceptor(server_context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
+    uint16_t port = acceptor.local_endpoint().port();
+
+    std::atomic<bool> callback_called{false};
+    std::string received_message;
+    std::mutex message_mutex;
+
+    acceptor.async_accept([&](const asio::error_code &ec, asio::ip::tcp::socket socket) {
+        if (!ec) {
+            auto session = std::make_shared<Session>(std::move(socket));
+            session->start([&](std::string message) {
+                std::lock_guard<std::mutex> lock(message_mutex);
+                callback_called  = true;
+                received_message = std::move(message);
+            });
+        }
+    });
+
+    std::thread server_thread([&]() { server_context.run(); });
+
+    asio::io_context client_context;
+    asio::ip::tcp::socket client_socket(client_context);
+    client_socket.connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), port));
+
+    std::string message = "Hello Session";
+    size_t length       = message.size();
+    asio::write(client_socket, asio::buffer(&length, sizeof(length)));
+    asio::write(client_socket, asio::buffer(message));
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    server_context.stop();
+    if (server_thread.joinable()) {
+        server_thread.join();
+    }
+
+    std::lock_guard<std::mutex> lock(message_mutex);
+    EXPECT_TRUE(callback_called);
+    EXPECT_EQ(received_message, message);
 }
 
 // ========== Concurrent Access Tests ==========
