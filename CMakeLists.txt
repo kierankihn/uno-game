@@ -31,6 +31,7 @@ add_library(uno-game-lib
         src/network/NetworkClient.cpp
         src/client/UnoClient.cpp
         src/server/UnoServer.cpp
+        src/network/Session.cpp
 )
 target_link_libraries(uno-game-lib
         PUBLIC ftxui::screen
