@@ -63,6 +63,10 @@ namespace UNO::NETWORK {
         auto msg    = std::make_shared<std::string>(message);
 
         std::array<asio::const_buffer, 2> buffers = {asio::buffer(length.get(), sizeof(size_t)), asio::buffer(*msg)};
-        asio::async_write(socket_, buffers, [this, self = shared_from_this(), length, msg](const asio::error_code &ec, size_t) {});
+        asio::async_write(socket_, buffers, [this, self = shared_from_this(), length, msg](const asio::error_code &ec, size_t) {
+            if (!ec && this->messages_.empty() == false) {
+                this->doWrite();
+            }
+        });
     }
 }   // namespace UNO::NETWORK
