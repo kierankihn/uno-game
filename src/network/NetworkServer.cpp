@@ -9,52 +9,6 @@
 #include <utility>
 
 namespace UNO::NETWORK {
-    Session::Session(size_t player_id, asio::ip::tcp::socket socket) : player_id_(player_id), socket_(std::move(socket)) {}
-
-    void Session::start(std::function<void(size_t, std::string)> callback)
-    {
-        this->callback_ = std::move(callback);
-        read();
-    }
-
-    void Session::send(const std::string &message)
-    {
-        auto length                               = std::make_shared<size_t>(message.size());
-        auto msg                                  = std::make_shared<std::string>(message);
-        std::array<asio::const_buffer, 2> buffers = {asio::buffer(length.get(), sizeof(size_t)), asio::buffer(*msg)};
-        asio::async_write(socket_, buffers, [this, self = shared_from_this(), length, msg](const asio::error_code &ec, size_t) {});
-    }
-
-    void Session::read()
-    {
-        auto messageLength = std::make_shared<size_t>(0);
-        asio::async_read(socket_,
-                         asio::buffer(messageLength.get(), sizeof(size_t)),
-                         [this, self = shared_from_this(), messageLength](const asio::error_code &ec, size_t length) {
-                             if (!ec) {
-                                 if (*messageLength <= 10 * 1024 * 1024) {
-                                     this->readBody(*messageLength);
-                                 }
-                                 else {
-                                     read();
-                                 }
-                             }
-                         });
-    }
-
-    void Session::readBody(size_t length)
-    {
-        auto buffer = std::make_shared<std::vector<char>>(length);
-        asio::async_read(
-            socket_, asio::buffer(*buffer), [this, self = shared_from_this(), buffer](const asio::error_code &ec, size_t length) {
-                if (!ec) {
-                    std::string message = {buffer->begin(), buffer->end()};
-                    this->callback_(this->player_id_, message);
-                    read();
-                }
-            });
-    }
-
     void NetworkServer::accept()
     {
         this->acceptor_.async_accept([this](const asio::error_code &ec, asio::ip::tcp::socket socket) {
@@ -74,8 +28,9 @@ namespace UNO::NETWORK {
     void NetworkServer::addPlayer(asio::ip::tcp::socket socket)
     {
         std::lock_guard<std::mutex> lock(this->mutex_);
-        this->sessions_[this->playerCount] = std::make_shared<Session>(playerCount, std::move(socket));
-        this->sessions_[this->playerCount]->start(callback_);
+        size_t playerId           = this->playerCount;
+        this->sessions_[playerId] = std::make_shared<Session>(std::move(socket));
+        this->sessions_[playerId]->start([this, playerId](std::string message) { this->callback_(playerId, std::move(message)); });
         this->playerCount++;
     }
 

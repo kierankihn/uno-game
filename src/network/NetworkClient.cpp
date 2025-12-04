@@ -7,42 +7,26 @@
 #include "NetworkClient.h"
 
 #include <asio/connect.hpp>
-#include <asio/read.hpp>
-#include <asio/write.hpp>
+#include <memory>
 #include <utility>
 
 namespace UNO::NETWORK {
-    NetworkClient::NetworkClient(std::function<void(std::string)> callback) : socket_(io_context_), callback_(std::move(callback)) {}
+    NetworkClient::NetworkClient(std::function<void(std::string)> callback) : callback_(std::move(callback)) {}
 
     void NetworkClient::connect(const std::string &host, uint16_t port)
     {
-        this->disconnect();
+        asio::ip::tcp::socket socket(io_context_);
+
         asio::ip::tcp::resolver resolver(io_context_);
         auto endpoints = resolver.resolve(host, std::to_string(port));
-        asio::connect(socket_, endpoints.begin(), endpoints.end());
-    }
 
-    void NetworkClient::disconnect()
-    {
-        if (socket_.is_open()) {
-            this->socket_.close();
-        }
+        this->session_ = std::make_shared<Session>(std::move(socket));
+        this->session_->start(callback_);
     }
 
 
-    void NetworkClient::send(const std::string &message)
+    void NetworkClient::send(const std::string &message) const
     {
-        size_t length = message.size();
-        asio::write(this->socket_, asio::buffer(&length, sizeof(length)));
-        asio::write(this->socket_, asio::buffer(message));
-    }
-
-    std::string NetworkClient::read()
-    {
-        size_t length;
-        asio::read(this->socket_, asio::buffer(&length, sizeof(length)));
-        std::vector<char> buffer(length);
-        asio::read(this->socket_, asio::buffer(buffer));
-        return {buffer.begin(), buffer.end()};
+        this->session_->send(message);
     }
 }   // namespace UNO::NETWORK

@@ -5,16 +5,18 @@
  * @date 2025.11.28
  */
 #pragma once
+#include "Session.h"
+
 #include <asio/io_context.hpp>
-#include <asio/ip/tcp.hpp>
 
 namespace UNO::NETWORK {
 
     class NetworkClient {
     private:
         asio::io_context io_context_;
-        asio::ip::tcp::socket socket_;
         std::function<void(std::string)> callback_;
+
+        std::shared_ptr<Session> session_;
 
     public:
         explicit NetworkClient(std::function<void(std::string)> callback);
@@ -27,17 +29,10 @@ namespace UNO::NETWORK {
         void connect(const std::string &host, uint16_t port);
 
         /**
-         * 关闭到服务端的连接
-         */
-        void disconnect();
-
-        /**
          * 向服务端发送消息
          * @param message 要发送的消息
          */
-        void send(const std::string &message);
-
-        [[nodiscard]] std::string read();
+        void send(const std::string &message) const;
     };
 
 }   // namespace UNO::NETWORK
