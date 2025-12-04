@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 26)
 find_package(ftxui CONFIG REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
+find_package(argparse REQUIRED)
 
 # 移除 /utf-8 选项
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
@@ -50,5 +51,8 @@ target_link_libraries(uno-client
 add_executable(uno-server src/server/main.cpp)
 target_link_libraries(uno-server
         PRIVATE uno-game-lib)
+target_link_libraries(uno-server
+        PRIVATE argparse::argparse
+)
 
 add_subdirectory(test)
