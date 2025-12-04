@@ -28,6 +28,20 @@ namespace UNO::NETWORK {
         return serializeCards(cards.begin(), cards.end());
     }
 
+    nlohmann::json MessageSerializer::serializePlayerPublicState(const PlayerPublicState &state)
+    {
+        return {{"name", state.name}, {"remaining_cards", state.remainingCardCount}, {"is_uno", state.isUno}};
+    }
+
+    nlohmann::json MessageSerializer::serializePlayerPublicStates(const std::vector<PlayerPublicState> &states)
+    {
+        nlohmann::json result = nlohmann::json::array();
+        for (const auto &state : states) {
+            result.push_back(serializePlayerPublicState(state));
+        }
+        return result;
+    }
+
     nlohmann::json MessageSerializer::serializePayload(const std::monostate &payload)
     {
         return nullptr;
@@ -56,6 +70,7 @@ namespace UNO::NETWORK {
     nlohmann::json MessageSerializer::serializePayload(const InitGamePayload &payload)
     {
         return {{"player_id", payload.playerId},
+                {"players", serializePlayerPublicStates(payload.players)},
                 {"discard_pile", serializeDiscardPile(payload.discardPile)},
                 {"hand_card", serializeCards(payload.handCard.begin(), payload.handCard.end())},
                 {"current_player", payload.currentPlayerIndex}};
@@ -215,6 +230,41 @@ namespace UNO::NETWORK {
         return res;
     }
 
+    PlayerPublicState MessageSerializer::deserializePlayerPublicState(const nlohmann::json &payload)
+    {
+        try {
+            if (payload.is_object() == false) {
+                throw std::invalid_argument("Invalid player public state: expected JSON object");
+            }
+            if (payload.at("name").is_string() == false) {
+                throw std::invalid_argument("Invalid 'name' field in player public state: expected string");
+            }
+            if (payload.at("remaining_cards").is_number_unsigned() == false) {
+                throw std::invalid_argument("Invalid 'remaining_cards' field in player public state: expected unsigned integer");
+            }
+            if (payload.at("is_uno").is_boolean() == false) {
+                throw std::invalid_argument("Invalid 'is_uno' field in player public state: expected boolean");
+            }
+            return {payload.at("name"), payload.at("remaining_cards"), payload.at("is_uno")};
+        }
+        catch (const nlohmann::json::out_of_range &) {
+            throw std::invalid_argument("Missing required field in player public state: expected 'name', 'remaining_cards', 'is_uno'");
+        }
+    }
+
+    std::vector<PlayerPublicState> MessageSerializer::deserializePlayerPublicStates(const nlohmann::json &payload)
+    {
+        if (payload.is_array() == false) {
+            throw std::invalid_argument("Invalid players field in INIT_GAME payload: expected JSON array");
+        }
+
+        std::vector<PlayerPublicState> players;
+        for (const auto &entry : payload) {
+            players.push_back(deserializePlayerPublicState(entry));
+        }
+        return players;
+    }
+
     std::monostate MessageSerializer::deserializeEmptyPayload(const nlohmann::json &payload)
     {
         if (payload.is_null() == false) {
@@ -299,13 +349,14 @@ namespace UNO::NETWORK {
                 throw std::invalid_argument("Invalid 'current_player' field in INIT_GAME payload: expected unsigned integer");
             }
             return {payload.at("player_id"),
+                    deserializePlayerPublicStates(payload.at("players")),
                     deserializeDiscardPile(payload.at("discard_pile")),
                     deserializeHandCard(payload.at("hand_card")),
                     payload.at("current_player")};
         }
         catch (const nlohmann::json::out_of_range &) {
             throw std::invalid_argument(
-                "Missing required field in INIT_GAME payload: expected 'discard_pile', 'hand_card', and 'current_player'");
+                "Missing required field in INIT_GAME payload: expected 'players', 'discard_pile', 'hand_card', and 'current_player'");
         }
     }
 

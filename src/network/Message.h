@@ -13,6 +13,7 @@
 
 #include <string>
 #include <variant>
+#include <vector>
 
 
 namespace UNO::NETWORK {
@@ -29,12 +30,19 @@ namespace UNO::NETWORK {
         std::vector<GAME::Card> cards;
     };
 
+    struct PlayerPublicState {
+        std::string name;
+        size_t remainingCardCount;
+        bool isUno;
+    };
+
     struct PlayCardPayload {
         GAME::Card card;
     };
 
     struct InitGamePayload {
         size_t playerId;
+        std::vector<PlayerPublicState> players;
         GAME::DiscardPile discardPile;
         std::multiset<GAME::Card> handCard;
         size_t currentPlayerIndex;

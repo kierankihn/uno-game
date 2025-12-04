@@ -61,8 +61,15 @@ namespace UNO::SERVER {
     void UnoServer::handleStartGame()
     {
         serverGameState_.init();
+        std::vector<NETWORK::PlayerPublicState> players;
+        players.reserve(serverGameState_.getPlayers().size());
+        for (const auto &player : serverGameState_.getPlayers()) {
+            players.push_back({player.getName(), player.getRemainingCardCount(), player.getIsUno()});
+        }
+        size_t currentPlayerIndex = static_cast<size_t>(serverGameState_.getCurrentPlayer() - serverGameState_.getPlayers().begin());
         for (size_t i = 0; i < playerCount; i++) {
-            NETWORK::InitGamePayload payload = {i, serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), 0};
+            NETWORK::InitGamePayload payload = {
+                i, players, serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), currentPlayerIndex};
             this->networkServer_.send(
                 gameIdToNetworkId.at(i),
                 NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::INIT_GAME, payload}));
