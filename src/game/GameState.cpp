@@ -167,6 +167,13 @@ namespace UNO::GAME {
 
     ServerGameState::ServerGameState() : serverGameStage_(ServerGameStage::PRE_GAME) {}
 
+    void ServerGameState::addPlayer(ServerPlayerState playerState)
+    {
+        long long currentPlayerIndex = this->currentPlayer_ - this->players_.begin();
+        this->players_.push_back(std::move(playerState));
+        this->currentPlayer_ = this->players_.begin() + currentPlayerIndex;
+    }
+
     void ServerGameState::init()
     {
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {

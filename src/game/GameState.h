@@ -176,12 +176,6 @@ namespace UNO::GAME {
         [[nodiscard]] size_t getDrawCount() const;
 
         /**
-         * 向对局中添加玩家
-         * @param playerState 要添加的玩家状态
-         */
-        void addPlayer(PlayerStateType playerState);
-
-        /**
          * 清空玩家
          */
         void clearPlayers();
@@ -233,15 +227,6 @@ namespace UNO::GAME {
     size_t GameState<PlayerStateType>::getDrawCount() const
     {
         return this->drawCount_;
-    }
-
-
-    template<PlayerStateTypeConcept PlayerStateType>
-    void GameState<PlayerStateType>::addPlayer(PlayerStateType playerState)
-    {
-        int currentPlayerIndex = this->currentPlayer_ - this->players_.begin();
-        this->players_.push_back(std::move(playerState));
-        this->currentPlayer_ = this->players_.begin() + currentPlayerIndex;
     }
 
     template<PlayerStateTypeConcept PlayerStateType>
@@ -397,6 +382,12 @@ namespace UNO::GAME {
          * 开始游戏
          */
         void init();
+
+        /**
+         * 向对局中添加玩家
+         * @param playerState 要添加的玩家状态
+         */
+        void addPlayer(ServerPlayerState playerState);
 
         /**
          * 由于用户摸牌而改变状态
