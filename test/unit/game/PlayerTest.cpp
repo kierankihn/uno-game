@@ -25,7 +25,7 @@ TEST(player_test, player_test_1)
     ASSERT_EQ(handCard.getCards().begin()->getColor(), UNO::GAME::CardColor::RED);
     ASSERT_EQ(handCard.getCards().begin()->getType(), UNO::GAME::CardType::NUM1);
 
-    handCard.play(handCard.getCards().begin());
+    handCard.play(*handCard.getCards().begin());
 
     ASSERT_EQ(handCard.getCards().begin()->getColor(), UNO::GAME::CardColor::RED);
     ASSERT_EQ(handCard.getCards().begin()->getType(), UNO::GAME::CardType::SKIP);

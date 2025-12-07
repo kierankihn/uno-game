@@ -20,10 +20,7 @@ TEST(game_state_test, game_state_test_1)
     UNO::GAME::ClientPlayerState playerState3("qkp", 100, false);
     UNO::GAME::ClientPlayerState playerState4("lzh", 100, false);
 
-    clientGameState.addPlayer(playerState1);
-    clientGameState.addPlayer(playerState2);
-    clientGameState.addPlayer(playerState3);
-    clientGameState.addPlayer(playerState4);
+    clientGameState.init({playerState1, playerState2, playerState3, playerState4}, {}, {}, 0, 3);
 
     const auto &players = clientGameState.getPlayers();
     ASSERT_EQ(players[0].getName(), "pkq");
