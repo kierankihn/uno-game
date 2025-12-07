@@ -60,6 +60,11 @@ namespace UNO::GAME {
          * 出一张牌
          */
         Card virtual play(const Card &card);
+
+        /**
+         * 清空手牌
+         */
+        void virtual clear();
     };
 
     /**
@@ -112,6 +117,8 @@ namespace UNO::GAME {
          * @return 手牌是否为空
          */
         [[nodiscard]] bool isEmpty() const;
+
+        void clear() override;
     };
 
     /**
@@ -142,7 +149,7 @@ namespace UNO::GAME {
         /**
          * 下一个玩家
          */
-        void nextPlayer();
+        void virtual nextPlayer();
 
     public:
         virtual ~GameState() = default;
@@ -189,6 +196,8 @@ namespace UNO::GAME {
          * 由于用户摸牌而改变状态
          */
         std::vector<Card> virtual updateStateByDraw();
+
+        void virtual endGame();
     };
 
     template<PlayerStateTypeConcept PlayerStateType>
@@ -300,9 +309,26 @@ namespace UNO::GAME {
         return {};
     }
 
+    template<PlayerStateTypeConcept PlayerStateType>
+    void GameState<PlayerStateType>::endGame()
+    {
+        discardPile_.clear();
+        for (auto &player : this->players_) {
+            player.clear();
+        }
+    }
+
+
+    enum class ClientGameStage { PENDING_CONNECTION, PRE_GAME, ACTIVE, IDLE };
+
     class ClientGameState final : public GameState<ClientPlayerState> {
     private:
         Player player_;
+        std::vector<ClientPlayerState>::const_iterator self_;
+        ClientGameStage clientGameStage_;
+
+    private:
+        void nextPlayer() override;
 
     public:
         explicit ClientGameState(std::string name);
@@ -316,7 +342,11 @@ namespace UNO::GAME {
         /**
          * 初始化客户端状态
          */
-        void init(DiscardPile discardPile);
+        void init(const std::vector<ClientPlayerState> &players,
+                  const DiscardPile &discardPile,
+                  const std::multiset<Card> &handCard,
+                  const size_t &currentPlayerIndex,
+                  const size_t &selfIndex);
 
         /**
          * 摸一张牌
@@ -340,11 +370,25 @@ namespace UNO::GAME {
          * @return 手牌是否为空
          */
         [[nodiscard]] bool isEmpty() const;
+
+        /**
+         * 获取游戏阶段
+         * @return 游戏阶段
+         */
+        [[nodiscard]] ClientGameStage getClientGameStage() const;
+
+        /**
+         * 结束当前局
+         */
+        void endGame() override;
     };
+
+    enum class ServerGameStage { PRE_GAME, IN_GAME };
 
     class ServerGameState final : public GameState<ServerPlayerState> {
     private:
         Deck deck_;
+        ServerGameStage serverGameStage_;
 
     public:
         ServerGameState();
@@ -360,9 +404,15 @@ namespace UNO::GAME {
         std::vector<Card> updateStateByDraw() override;
 
         /**
-         * 重置游戏状态（用于重新开始）
+         * 获取游戏阶段
+         * @return 游戏阶段
          */
-        void reset();
+        [[nodiscard]] ServerGameStage getServerGameStage() const;
+
+        /**
+         * 结束当前局
+         */
+        void endGame() override;
     };
 }   // namespace UNO::GAME
 

@@ -54,6 +54,11 @@ namespace UNO::GAME {
         return cards_.empty();
     }
 
+    void HandCard::clear()
+    {
+        this->cards_.clear();
+    }
+
     Player::Player(std::string name) : name_(std::move(name)) {}
 
     const std::string &Player::getName() const
@@ -86,5 +91,8 @@ namespace UNO::GAME {
         return this->handCard_.play(card);
     }
 
+    void Player::clear()
+    {
+        this->handCard_.clear();
     }
 }   // namespace UNO::GAME

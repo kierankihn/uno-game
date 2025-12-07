@@ -46,6 +46,11 @@ namespace UNO::GAME {
         return card;
     }
 
+    void PlayerState::clear()
+    {
+        this->remainingCardCount_ = 0;
+    }
+
     ClientPlayerState::ClientPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
         PlayerState(std::move(name), remainingCardCount, isUno)
     {
@@ -84,16 +89,48 @@ namespace UNO::GAME {
         return this->handCard_.isEmpty();
     }
 
-    ClientGameState::ClientGameState(std::string name) : player_(std::move(name)) {}
+    void ServerPlayerState::clear()
+    {
+        PlayerState::clear();
+        this->handCard_.clear();
+    }
+
+    ClientGameState::ClientGameState(std::string name) : player_(std::move(name)), clientGameStage_(ClientGameStage::PENDING_CONNECTION) {}
+
+    void ClientGameState::nextPlayer()
+    {
+        GameState::nextPlayer();
+        if (this->self_ == this->currentPlayer_) {
+            this->clientGameStage_ = ClientGameStage::ACTIVE;
+        }
+        else {
+            this->clientGameStage_ = ClientGameStage::IDLE;
+        }
+    }
+
 
     const std::multiset<Card> &ClientGameState::getCards() const
     {
         return this->player_.getCards();
     }
 
-    void ClientGameState::init(DiscardPile discardPile)
+    void ClientGameState::init(const std::vector<ClientPlayerState> &players,
+                               const DiscardPile &discardPile,
+                               const std::multiset<Card> &handCard,
+                               const size_t &currentPlayerIndex,
+                               const size_t &selfIndex)
     {
-        this->discardPile_ = std::move(discardPile);
+        this->players_     = players;
+        this->discardPile_ = discardPile;
+        player_.draw(std::vector<Card>(handCard.begin(), handCard.end()));
+        this->currentPlayer_ = this->players_.begin() + static_cast<int>(currentPlayerIndex);
+        this->self_          = this->players_.begin() + static_cast<int>(selfIndex);
+        if (this->self_ == this->currentPlayer_) {
+            this->clientGameStage_ = ClientGameStage::ACTIVE;
+        }
+        else {
+            this->clientGameStage_ = ClientGameStage::IDLE;
+        }
     }
 
 
@@ -117,19 +154,23 @@ namespace UNO::GAME {
         return this->player_.isEmpty();
     }
 
-    ServerGameState::ServerGameState() = default;
+    ClientGameStage ClientGameState::getClientGameStage() const
+    {
+        return this->clientGameStage_;
+    }
+
+    void ClientGameState::endGame()
+    {
+        this->clientGameStage_ = ClientGameStage::PRE_GAME;
+        this->player_.clear();
+    }
+
+    ServerGameState::ServerGameState() : serverGameStage_(ServerGameStage::PRE_GAME) {}
 
     void ServerGameState::init()
     {
-        deck_.clear(), discardPile_.clear();
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
             discardPile_.add(deck_.draw());
-        }
-
-        for (auto &player : this->players_) {
-            while (player.isEmpty() == false) {
-                player.play(*player.getCards().begin());
-            }
         }
 
         for (size_t i = 0; i < 7; i++) {
@@ -137,6 +178,8 @@ namespace UNO::GAME {
                 player.draw(1, this->deck_.draw(1));
             }
         }
+
+        this->serverGameStage_ = ServerGameStage::IN_GAME;
     }
 
     std::vector<Card> ServerGameState::updateStateByDraw()
@@ -151,18 +194,16 @@ namespace UNO::GAME {
         return cards;
     }
 
-    void ServerGameState::reset()
+    ServerGameStage ServerGameState::getServerGameStage() const
     {
-        discardPile_.clear();
-        isReversed_ = false;
-        drawCount_  = 0;
+        return this->serverGameStage_;
+    }
 
-        for (auto &player : players_) {
-            while (!player.isEmpty()) {
-                player.play(*player.getCards().begin());
-            }
-        }
+    void ServerGameState::endGame()
+    {
+        this->serverGameStage_ = ServerGameStage::PRE_GAME;
+        deck_.clear();
 
-        currentPlayer_ = players_.begin();
+        GameState::endGame();
     }
 }   // namespace UNO::GAME

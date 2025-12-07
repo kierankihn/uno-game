@@ -59,6 +59,11 @@ namespace UNO::GAME {
          * @return 手牌是否为空
          */
         [[nodiscard]] bool isEmpty() const;
+
+        /**
+         * 清空手牌
+         */
+        void clear();
     };
 
     /**
@@ -105,6 +110,11 @@ namespace UNO::GAME {
          * @return 手牌是否为空
          */
         [[nodiscard]] bool isEmpty() const;
+
+        /**
+         * 清空手牌
+         */
+        void clear();
     };
 }   // namespace UNO::GAME
 
