@@ -45,8 +45,9 @@ namespace UNO::SERVER {
                 || playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::END_GAME) {
                 throw std::invalid_argument("Invalid message payload type from client");
             }
-            if (this->networkIdToGameId.at(playerId)
-                != this->serverGameState_.getCurrentPlayer() - this->serverGameState_.getPlayers().begin()) {
+            if (this->serverGameState_.getServerGameStage() == GAME::ServerGameStage::IN_GAME
+                && this->networkIdToGameId.at(playerId)
+                       != this->serverGameState_.getCurrentPlayer() - this->serverGameState_.getPlayers().begin()) {
                 throw std::invalid_argument("Invalid player message: not this player's turn");
             }
             if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::DRAW_CARD) {
@@ -61,10 +62,10 @@ namespace UNO::SERVER {
     void UnoServer::handleStartGame()
     {
         serverGameState_.init();
-        std::vector<NETWORK::PlayerPublicState> players;
+        std::vector<GAME::ClientPlayerState> players;
         players.reserve(serverGameState_.getPlayers().size());
         for (const auto &player : serverGameState_.getPlayers()) {
-            players.push_back({player.getName(), player.getRemainingCardCount(), player.getIsUno()});
+            players.emplace_back(player.getName(), player.getRemainingCardCount(), player.getIsUno());
         }
         size_t currentPlayerIndex = static_cast<size_t>(serverGameState_.getCurrentPlayer() - serverGameState_.getPlayers().begin());
         for (size_t i = 0; i < playerCount; i++) {
@@ -120,14 +121,14 @@ namespace UNO::SERVER {
 
     void UnoServer::handleEndGame()
     {
+        this->serverGameState_.endGame();
+
         NETWORK::EndGamePayload payload{};
         auto message = NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::END_GAME, payload});
 
         for (size_t i = 0; i < playerCount; i++) {
             this->networkServer_.send(gameIdToNetworkId.at(i), message);
         }
-
-        this->serverGameState_.reset();
 
         for (size_t i = 0; i < playerCount; i++) {
             this->isReadyToStart[i] = false;
