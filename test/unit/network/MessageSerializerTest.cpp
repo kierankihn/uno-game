@@ -195,7 +195,7 @@ TEST(MessageSerializerTest, SerializeInitGameMessage)
     handCard.draw(Card(CardColor::GREEN, CardType::NUM3));
     handCard.draw(Card(CardColor::YELLOW, CardType::REVERSE));
 
-    InitGamePayload payload{1, discardPile, handCard.getCards(), 2};
+    InitGamePayload payload{1, {}, discardPile, handCard.getCards(), 2};
     Message message(MessageStatus::OK, MessagePayloadType::INIT_GAME, payload);
 
     std::string result  = MessageSerializer::serialize(message);
@@ -216,7 +216,7 @@ TEST(MessageSerializerTest, SerializeInitGameMessageWithEmptyPiles)
     DiscardPile discardPile;
     HandCard handCard;
 
-    InitGamePayload payload{0, discardPile, handCard.getCards(), 0};
+    InitGamePayload payload{0, {}, discardPile, handCard.getCards(), 0};
     Message message(MessageStatus::OK, MessagePayloadType::INIT_GAME, payload);
 
     std::string result  = MessageSerializer::serialize(message);
@@ -389,6 +389,7 @@ TEST(MessageSerializerTest, DeserializeInitGameMessage)
         "payload_type":"INIT_GAME",
         "payload":{
             "player_id":42,
+            "players": [],
             "discard_pile":[{"card_color":"Red","card_type":"5"}],
             "hand_card":[{"card_color":"Blue","card_type":"Skip"}],
             "current_player":2
@@ -868,137 +869,141 @@ TEST(MessageSerializerTest, DeserializeInitGameWithArrayPayload)
 
 TEST(MessageSerializerTest, DeserializeInitGameWithMissingPlayerId)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"discard_pile":[],"hand_card":[],"current_player":0}})";
+    std::string json =
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"discard_pile":[],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNullPlayerId)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":null,"discard_pile":[],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":null,"discard_pile":[],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithStringPlayerId)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":"0","discard_pile":[],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":"0","discard_pile":[],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNegativePlayerId)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":-1,"discard_pile":[],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":-1,"discard_pile":[],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithFloatPlayerId)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":1.5,"discard_pile":[],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":1.5,"discard_pile":[],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithMissingDiscardPile)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"hand_card":[],"current_player":0}})";
+    std::string json =
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithMissingHandCard)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"current_player":0}})";
+    std::string json =
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithMissingCurrentPlayer)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[]}})";
+    std::string json =
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNullDiscardPile)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":null,"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":null,"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNullHandCard)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":null,"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":null,"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithStringDiscardPile)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":"test","hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":"test","hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithStringHandCard)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":"test","current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":"test","current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithStringCurrentPlayer)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":"0"}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":"0","players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNullCurrentPlayer)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":null}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":null,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNegativeCurrentPlayer)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":-1}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":-1,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithFloatCurrentPlayer)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":1.5}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[],"current_player":1.5,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithInvalidCardInDiscardPile)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[{"card_color":"Invalid","card_type":"5"}],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[{"card_color":"Invalid","card_type":"5"}],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithInvalidCardInHandCard)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[{"card_color":"Red","card_type":"Invalid"}],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[{"card_color":"Red","card_type":"Invalid"}],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNonObjectCardInDiscardPile)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":["string"],"hand_card":[],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":["string"],"hand_card":[],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializeInitGameWithNonObjectCardInHandCard)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[123],"current_player":0}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[123],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -1059,7 +1064,7 @@ TEST(MessageSerializerTest, DeserializeLargeDrawCount)
 TEST(MessageSerializerTest, DeserializeLargeCurrentPlayer)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":7,"discard_pile":[],"hand_card":[],"current_player":4294967295}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":7,"discard_pile":[],"hand_card":[],"current_player":4294967295,"players": []}})";
     Message message = MessageSerializer::deserialize(json);
     auto payload    = std::get<InitGamePayload>(message.getMessagePayload());
     EXPECT_EQ(payload.playerId, 7);
@@ -1155,6 +1160,7 @@ TEST(MessageSerializerTest, DeserializeHugeArray)
     json["payload_type"]            = "INIT_GAME";
     json["payload"]["player_id"]    = 0;
     json["payload"]["discard_pile"] = nlohmann::json::array();
+    json["payload"]["players"]      = nlohmann::json::array();
     for (int i = 0; i < 10000; ++i) {
         json["payload"]["discard_pile"].push_back({{"card_color", "Red"}, {"card_type", "5"}});
     }
