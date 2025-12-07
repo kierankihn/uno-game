@@ -6,6 +6,7 @@
  */
 #include "Player.h"
 
+#include <stdexcept>
 #include <utility>
 
 namespace UNO::GAME {
@@ -28,11 +29,24 @@ namespace UNO::GAME {
         }
     }
 
-    Card HandCard::play(const std::multiset<Card>::iterator &it)
+    void HandCard::play(const std::multiset<Card>::iterator &it)
     {
-        const Card card = *it;
-        cards_.erase(it);
-        return card;
+        this->cards_.erase(it);
+    }
+
+
+    void HandCard::play(const Card &card)
+    {
+        for (auto it = cards_.begin();; it++) {
+            if (it == cards_.end()) {
+                throw std::invalid_argument("Card not found in hand");
+            }
+            if (card.getType() == it->getType()
+                && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
+                this->play(it);
+                break;
+            }
+        }
     }
 
     bool HandCard::isEmpty() const
@@ -67,8 +81,10 @@ namespace UNO::GAME {
         return this->handCard_.isEmpty();
     }
 
-    Card Player::play(const std::multiset<Card>::iterator &it)
+    void Player::play(const Card &card)
     {
-        return this->handCard_.play(it);
+        return this->handCard_.play(card);
+    }
+
     }
 }   // namespace UNO::GAME

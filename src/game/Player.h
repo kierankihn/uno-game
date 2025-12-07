@@ -8,7 +8,6 @@
  */
 #ifndef UNO_GAME_PLAYER_H
 #define UNO_GAME_PLAYER_H
-#include <array>
 #include <set>
 #include <vector>
 
@@ -21,6 +20,13 @@ namespace UNO::GAME {
     class HandCard {
     private:
         std::multiset<Card> cards_;
+
+    private:
+        /**
+         * 打出一张牌
+         * @param it 要打出的手牌的迭代器
+         */
+        void play(const std::multiset<Card>::iterator &it);
 
     public:
         explicit HandCard();
@@ -45,10 +51,9 @@ namespace UNO::GAME {
 
         /**
          * 打出一张牌
-         * @param it 要打出的手牌的迭代器
-         * @return 打出的手牌
+         * @param card 要打出的手牌
          */
-        Card play(const std::multiset<Card>::iterator &it);
+        void play(const Card &card);
 
         /**
          * @return 手牌是否为空
@@ -92,10 +97,9 @@ namespace UNO::GAME {
 
         /**
          * 打出一张牌
-         * @param it 要打出的手牌的迭代器
-         * @return 打出的手牌
+         * @param card 要打出的手牌
          */
-        Card play(const std::multiset<Card>::iterator &it);
+        void play(const Card &card);
 
         /**
          * @return 手牌是否为空

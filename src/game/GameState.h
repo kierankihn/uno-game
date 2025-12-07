@@ -75,11 +75,6 @@ namespace UNO::GAME {
          * @param cards 摸的牌
          */
         void draw(size_t n, const std::vector<Card> &cards) override;
-
-        /**
-         * 出一张牌
-         */
-        Card play(const Card &card) override;
     };
 
     /**
@@ -337,10 +332,9 @@ namespace UNO::GAME {
 
         /**
          * 打出一张牌
-         * @param it 要打出的手牌的迭代器
-         * @return 打出的手牌
+         * @param card 要打出的手牌
          */
-        Card play(const std::multiset<Card>::iterator &it);
+        void play(const Card &card);
 
         /**
          * @return 手牌是否为空

@@ -56,11 +56,6 @@ namespace UNO::GAME {
         PlayerState::draw(n, cards);
     }
 
-    Card ClientPlayerState::play(const Card &card)
-    {
-        return PlayerState::play(card);
-    }
-
     ServerPlayerState::ServerPlayerState(std::string name, size_t remainingCardCount, bool isUno) :
         PlayerState(std::move(name), remainingCardCount, isUno)
     {
@@ -80,16 +75,7 @@ namespace UNO::GAME {
 
     Card ServerPlayerState::play(const Card &card)
     {
-        for (auto it = this->handCard_.getCards().begin();; it++) {
-            if (it == this->handCard_.getCards().end()) {
-                throw std::invalid_argument("Card not found in hand");
-            }
-            if (card.getType() == it->getType()
-                && (card.getType() == CardType::WILD || card.getType() == CardType::WILDDRAWFOUR || card.getColor() == it->getColor())) {
-                this->handCard_.play(it);
-                break;
-            }
-        }
+        this->handCard_.play(card);
         return PlayerState::play(card);
     }
 
@@ -121,9 +107,9 @@ namespace UNO::GAME {
         this->player_.draw(cards);
     }
 
-    Card ClientGameState::play(const std::multiset<Card>::iterator &it)
+    void ClientGameState::play(const Card &card)
     {
-        return this->player_.play(it);
+        this->player_.play(card);
     }
 
     bool ClientGameState::isEmpty() const
