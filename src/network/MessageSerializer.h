@@ -24,8 +24,8 @@ namespace UNO::NETWORK {
         static nlohmann::json serializeCards(Iterator begin, Iterator end);
 
         static nlohmann::json serializeDiscardPile(const GAME::DiscardPile &discardPile);
-        static nlohmann::json serializePlayerPublicState(const PlayerPublicState &state);
-        static nlohmann::json serializePlayerPublicStates(const std::vector<PlayerPublicState> &states);
+        static nlohmann::json serializeClientPlayerState(const GAME::ClientPlayerState &state);
+        static nlohmann::json serializeClientPlayerStates(const std::vector<GAME::ClientPlayerState> &states);
 
         static nlohmann::json serializePayload(const std::monostate &payload);
         static nlohmann::json serializePayload(const JoinGamePayload &payload);
@@ -45,8 +45,8 @@ namespace UNO::NETWORK {
         static GAME::Card deserializeCard(const nlohmann::json &card);
         static GAME::DiscardPile deserializeDiscardPile(const nlohmann::json &discardPile);
         static std::multiset<GAME::Card> deserializeHandCard(const nlohmann::json &handCard);
-        static PlayerPublicState deserializePlayerPublicState(const nlohmann::json &payload);
-        static std::vector<PlayerPublicState> deserializePlayerPublicStates(const nlohmann::json &payload);
+        static GAME::ClientPlayerState deserializeClientPlayerState(const nlohmann::json &payload);
+        static std::vector<GAME::ClientPlayerState> deserializeClientPlayerStates(const nlohmann::json &payload);
 
         static std::monostate deserializeEmptyPayload(const nlohmann::json &payload);
         static JoinGamePayload deserializeJoinGamePayload(const nlohmann::json &payload);

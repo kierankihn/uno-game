@@ -8,6 +8,7 @@
 #define UNO_GAME_MESSAGE_H
 #include "../game/Card.h"
 #include "../game/CardTile.h"
+#include "../game/GameState.h"
 #include "../game/Player.h"
 
 
@@ -30,19 +31,13 @@ namespace UNO::NETWORK {
         std::vector<GAME::Card> cards;
     };
 
-    struct PlayerPublicState {
-        std::string name;
-        size_t remainingCardCount;
-        bool isUno;
-    };
-
     struct PlayCardPayload {
         GAME::Card card;
     };
 
     struct InitGamePayload {
         size_t playerId;
-        std::vector<PlayerPublicState> players;
+        std::vector<GAME::ClientPlayerState> players;
         GAME::DiscardPile discardPile;
         std::multiset<GAME::Card> handCard;
         size_t currentPlayerIndex;

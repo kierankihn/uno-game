@@ -28,16 +28,16 @@ namespace UNO::NETWORK {
         return serializeCards(cards.begin(), cards.end());
     }
 
-    nlohmann::json MessageSerializer::serializePlayerPublicState(const PlayerPublicState &state)
+    nlohmann::json MessageSerializer::serializeClientPlayerState(const GAME::ClientPlayerState &state)
     {
-        return {{"name", state.name}, {"remaining_cards", state.remainingCardCount}, {"is_uno", state.isUno}};
+        return {{"name", state.getName()}, {"remaining_cards", state.getRemainingCardCount()}, {"is_uno", state.getIsUno()}};
     }
 
-    nlohmann::json MessageSerializer::serializePlayerPublicStates(const std::vector<PlayerPublicState> &states)
+    nlohmann::json MessageSerializer::serializeClientPlayerStates(const std::vector<GAME::ClientPlayerState> &states)
     {
         nlohmann::json result = nlohmann::json::array();
         for (const auto &state : states) {
-            result.push_back(serializePlayerPublicState(state));
+            result.push_back(serializeClientPlayerState(state));
         }
         return result;
     }
@@ -70,7 +70,7 @@ namespace UNO::NETWORK {
     nlohmann::json MessageSerializer::serializePayload(const InitGamePayload &payload)
     {
         return {{"player_id", payload.playerId},
-                {"players", serializePlayerPublicStates(payload.players)},
+                {"players", serializeClientPlayerStates(payload.players)},
                 {"discard_pile", serializeDiscardPile(payload.discardPile)},
                 {"hand_card", serializeCards(payload.handCard.begin(), payload.handCard.end())},
                 {"current_player", payload.currentPlayerIndex}};
@@ -230,7 +230,7 @@ namespace UNO::NETWORK {
         return res;
     }
 
-    PlayerPublicState MessageSerializer::deserializePlayerPublicState(const nlohmann::json &payload)
+    GAME::ClientPlayerState MessageSerializer::deserializeClientPlayerState(const nlohmann::json &payload)
     {
         try {
             if (payload.is_object() == false) {
@@ -252,15 +252,15 @@ namespace UNO::NETWORK {
         }
     }
 
-    std::vector<PlayerPublicState> MessageSerializer::deserializePlayerPublicStates(const nlohmann::json &payload)
+    std::vector<GAME::ClientPlayerState> MessageSerializer::deserializeClientPlayerStates(const nlohmann::json &payload)
     {
         if (payload.is_array() == false) {
             throw std::invalid_argument("Invalid players field in INIT_GAME payload: expected JSON array");
         }
 
-        std::vector<PlayerPublicState> players;
+        std::vector<GAME::ClientPlayerState> players;
         for (const auto &entry : payload) {
-            players.push_back(deserializePlayerPublicState(entry));
+            players.push_back(deserializeClientPlayerState(entry));
         }
         return players;
     }
@@ -349,7 +349,7 @@ namespace UNO::NETWORK {
                 throw std::invalid_argument("Invalid 'current_player' field in INIT_GAME payload: expected unsigned integer");
             }
             return {payload.at("player_id"),
-                    deserializePlayerPublicStates(payload.at("players")),
+                    deserializeClientPlayerStates(payload.at("players")),
                     deserializeDiscardPile(payload.at("discard_pile")),
                     deserializeHandCard(payload.at("hand_card")),
                     payload.at("current_player")};
