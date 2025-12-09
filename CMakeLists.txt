@@ -21,6 +21,8 @@ add_library(uno-game-lib
         src/client/UnoClient.cpp
         src/server/UnoServer.cpp
         src/network/Session.cpp
+        src/client/PlayerAction.cpp
+        src/ui/GameUI.cpp
 )
 target_link_libraries(uno-game-lib
         PUBLIC nlohmann_json::nlohmann_json
