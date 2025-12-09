@@ -1,0 +1,33 @@
+import { ConnectPage } from "ConnectPage.slint";
+import { StartPage } from "StartPage.slint";
+
+enum PageType {
+    ConnectPage,
+    StartPage,
+    GamePage
+}
+
+export component MainWindow inherits Window {
+    in property <PageType> active-page: PageType.ConnectPage;
+    in property <bool> is-connecting;
+    in property <bool> is-ready;
+
+    callback request-connect(string, string, string);
+    callback request-start;
+
+    width: 1920px;
+    height: 1080px;
+
+    if root.active-page == PageType.ConnectPage: connect-page := ConnectPage {
+        is-connecting: root.is-connecting;
+        request-connect(server-address, server-port, player-name) => {
+            root.request-connect(server-address, server-port, player-name);
+        }
+    }
+    if root.active-page == PageType.StartPage: start-page := StartPage {
+        is-ready: root.is-ready;
+        request-start => {
+            root.request-start();
+        }
+    }
+}

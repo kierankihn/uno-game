@@ -1,0 +1,75 @@
+import {Button} from "Components.slint";
+
+export component StartPage inherits Window {
+    width: 1920px;
+    height: 1080px;
+    title: "UNO!";
+
+    in property <bool> is-ready;
+
+    callback request-start;
+
+    // 背景渐变 (从左上角的米色到右下角的淡粉色)
+    Rectangle {
+        background: @linear-gradient(135deg, #fdfbf7 0%, #f3e7e9 100%);
+    }
+
+    // 中心卡片
+    Rectangle {
+        width: 600px;
+        height: 600px; // 根据内容高度调整
+        background: #FDFBF8; // 略微区别于背景的米白色
+        border-radius: 20px;
+
+        // 简单的阴影模拟
+        drop-shadow-blur: 20px;
+        drop-shadow-color: #00000015;
+        drop-shadow-offset-y: 4px;
+
+        VerticalLayout {
+            padding: 40px;
+            spacing: 20px;
+            alignment: center;
+
+            // 标题区域
+            VerticalLayout {
+                spacing: 8px;
+                alignment: center;
+
+                Text {
+                    text: "UNO";
+                    font-size: 96px;
+                    font-weight: 700;
+                    color: #222222;
+                    horizontal-alignment: center;
+                }
+
+                Text {
+                    text: "连接成功，所有玩家准备后开始游戏";
+                    font-size: 14px;
+                    color: #666666;
+                    horizontal-alignment: center;
+                }
+            }
+
+            // 占位间隔
+            Rectangle {
+                height: 10px;
+            }
+
+            // 底部按钮区域 (增加一点顶部间距)
+            HorizontalLayout {
+                padding-top: 10px;
+                alignment: center;
+
+                Button {
+                    enabled: !is-ready;
+                    text: is-ready ? "已准备" : "准备";
+                    clicked => {
+                        root.request-start();
+                    }
+                }
+            }
+        }
+    }
+}
