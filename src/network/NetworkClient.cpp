@@ -7,21 +7,34 @@
 #include "NetworkClient.h"
 
 #include <asio/connect.hpp>
+#include <iostream>
 #include <memory>
 #include <utility>
 
 namespace UNO::NETWORK {
-    NetworkClient::NetworkClient(std::function<void(std::string)> callback) : callback_(std::move(callback)) {}
+    NetworkClient::NetworkClient(std::function<void()> onConnect, std::function<void(std::string)> callback) :
+        onConnected_(std::move(onConnect)), callback_(std::move(callback)), workGuard_(asio::make_work_guard(io_context_))
+    {
+    }
 
     void NetworkClient::connect(const std::string &host, uint16_t port)
     {
-        io_context_.restart();
-        asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        auto endpoints = resolver.resolve(host, std::to_string(port));
-        asio::connect(socket, endpoints);
-        this->session_ = std::make_shared<Session>(std::move(socket));
-        this->session_->start(callback_);
+        auto socket   = std::make_shared<asio::ip::tcp::socket>(io_context_);
+        auto resolver = std::make_shared<asio::ip::tcp::resolver>(io_context_);
+        resolver->async_resolve(host,
+                                std::to_string(port),
+                                [this, resolver, socket](const asio::error_code &ec, const asio::ip::tcp::resolver::results_type &results) {
+                                    if (!ec) {
+                                        asio::async_connect(
+                                            *socket, results, [this, socket](const asio::error_code &ec, const asio::ip::tcp::endpoint &) {
+                                                if (!ec) {
+                                                    this->session_ = std::make_shared<Session>(std::move(*socket));
+                                                    this->session_->start(callback_);
+                                                    this->onConnected_();
+                                                }
+                                            });
+                                    }
+                                });
     }
 
 
@@ -37,6 +50,7 @@ namespace UNO::NETWORK {
 
     void NetworkClient::stop()
     {
+        this->workGuard_.reset();
         this->io_context_.stop();
     }
 }   // namespace UNO::NETWORK

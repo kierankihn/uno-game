@@ -14,12 +14,15 @@ namespace UNO::NETWORK {
     class NetworkClient {
     private:
         asio::io_context io_context_;
+        asio::executor_work_guard<asio::io_context::executor_type> workGuard_;
+
+        std::function<void()> onConnected_;
         std::function<void(std::string)> callback_;
 
         std::shared_ptr<Session> session_;
 
     public:
-        explicit NetworkClient(std::function<void(std::string)> callback);
+        NetworkClient(std::function<void()> onConnect, std::function<void(std::string)> callback);
 
         /**
          * 连接到服务端
