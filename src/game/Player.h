@@ -75,12 +75,14 @@ namespace UNO::GAME {
         HandCard handCard_;
 
     public:
-        explicit Player(std::string name);
+        Player();
 
         /**
          * @return 返回玩家名字
          */
         [[nodiscard]] const std::string &getName() const;
+
+        void setName(const std::string &name);
 
         /**
          * 获得当前手牌

@@ -316,7 +316,17 @@ namespace UNO::GAME {
         void nextPlayer() override;
 
     public:
-        explicit ClientGameState(std::string name);
+        ClientGameState();
+
+        /**
+         * 设置玩家名字
+         */
+        void setPlayerName(const std::string &name);
+        /**
+         * 获取当前玩家的名字
+         * @return 玩家名字
+         */
+        [[nodiscard]] std::string getPlayerName() const;
 
         /**
          * 获得当前手牌

@@ -95,7 +95,18 @@ namespace UNO::GAME {
         this->handCard_.clear();
     }
 
-    ClientGameState::ClientGameState(std::string name) : player_(std::move(name)), clientGameStage_(ClientGameStage::PENDING_CONNECTION) {}
+    ClientGameState::ClientGameState() : clientGameStage_(ClientGameStage::PENDING_CONNECTION) {}
+
+    std::string ClientGameState::getPlayerName() const
+    {
+        return this->player_.getName();
+    }
+
+    void ClientGameState::setPlayerName(const std::string &name)
+    {
+        this->player_.setName(name);
+    }
+
 
     void ClientGameState::nextPlayer()
     {
@@ -107,7 +118,6 @@ namespace UNO::GAME {
             this->clientGameStage_ = ClientGameStage::IDLE;
         }
     }
-
 
     const std::multiset<Card> &ClientGameState::getCards() const
     {
@@ -132,7 +142,6 @@ namespace UNO::GAME {
             this->clientGameStage_ = ClientGameStage::IDLE;
         }
     }
-
 
     void ClientGameState::draw(const Card &card)
     {

@@ -59,12 +59,18 @@ namespace UNO::GAME {
         this->cards_.clear();
     }
 
-    Player::Player(std::string name) : name_(std::move(name)) {}
+    Player::Player() = default;
 
     const std::string &Player::getName() const
     {
         return this->name_;
     }
+
+    void Player::setName(const std::string &name)
+    {
+        this->name_ = name;
+    }
+
 
     const std::multiset<Card> &Player::getCards() const
     {
