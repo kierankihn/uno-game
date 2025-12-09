@@ -3,21 +3,10 @@ project(uno-game)
 
 set(CMAKE_CXX_STANDARD 26)
 
-find_package(ftxui CONFIG REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
 find_package(argparse REQUIRED)
-
-# 移除 /utf-8 选项
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
-    foreach (component screen dom component)
-        get_target_property(FTXUI_COMPILE_OPTIONS ftxui::${component} INTERFACE_COMPILE_OPTIONS)
-        if (FTXUI_COMPILE_OPTIONS)
-            list(REMOVE_ITEM FTXUI_COMPILE_OPTIONS "/utf-8")
-            set_target_properties(ftxui::${component} PROPERTIES INTERFACE_COMPILE_OPTIONS "${FTXUI_COMPILE_OPTIONS}")
-        endif ()
-    endforeach ()
-endif ()
+find_package(Slint REQUIRED)
 
 add_library(uno-game-lib
         src/game/Card.cpp
@@ -34,20 +23,22 @@ add_library(uno-game-lib
         src/network/Session.cpp
 )
 target_link_libraries(uno-game-lib
-        PUBLIC ftxui::screen
-        PUBLIC ftxui::dom
-        PUBLIC ftxui::component
-)
-target_link_libraries(uno-game-lib
         PUBLIC nlohmann_json::nlohmann_json
 )
 target_link_libraries(uno-game-lib
         PUBLIC asio::asio
 )
+target_link_libraries(uno-game-lib PUBLIC Slint::Slint)
+
+slint_target_sources(uno-game-lib src/ui/MainWindow.slint)
 
 add_executable(uno-client src/client/main.cpp)
 target_link_libraries(uno-client
         PRIVATE uno-game-lib)
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    set_target_properties(uno-client PROPERTIES WIN32_EXECUTABLE ON)
+endif ()
 
 add_executable(uno-server src/server/main.cpp)
 target_link_libraries(uno-server
