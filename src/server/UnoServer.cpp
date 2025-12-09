@@ -10,7 +10,7 @@
 
 namespace UNO::SERVER {
     UnoServer::UnoServer(uint16_t port) :
-        networkServer_(port, [this](int playerId, const std::string &message) { this->handlePlayerMessage(playerId, message); }),
+        networkServer_(port, [this](size_t playerId, const std::string &message) { this->handlePlayerMessage(playerId, message); }),
         playerCount(0)
     {
     }
