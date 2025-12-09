@@ -363,6 +363,11 @@ namespace UNO::GAME {
         [[nodiscard]] ClientGameStage getClientGameStage() const;
 
         /**
+         * 将客户端状态设置为已连接
+         */
+        void setClientGameStageConnected();
+
+        /**
          * 结束当前局
          */
         void endGame() override;

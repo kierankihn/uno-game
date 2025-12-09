@@ -154,6 +154,11 @@ namespace UNO::GAME {
         return this->player_.isEmpty();
     }
 
+    void ClientGameState::setClientGameStageConnected()
+    {
+        this->clientGameStage_ = ClientGameStage::PRE_GAME;
+    }
+
     ClientGameStage ClientGameState::getClientGameStage() const
     {
         return this->clientGameStage_;
