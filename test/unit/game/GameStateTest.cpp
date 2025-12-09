@@ -13,7 +13,7 @@
 
 TEST(game_state_test, game_state_test_1)
 {
-    UNO::GAME::ClientGameState clientGameState(std::string("lzh"));
+    UNO::GAME::ClientGameState clientGameState;
 
     UNO::GAME::ClientPlayerState playerState1("pkq", 100, false);
     UNO::GAME::ClientPlayerState playerState2("kpq", 100, false);
