@@ -94,38 +94,60 @@ private:
 
 TEST(NetworkClientTest, ConstructorWithCallback)
 {
-    auto callback = [](std::string message) {};
+    auto on_connect = []() {};
+    auto callback   = [](std::string message) {};
 
-    EXPECT_NO_THROW({ NetworkClient client(callback); });
+    EXPECT_NO_THROW({ NetworkClient client(on_connect, callback); });
 }
 
 TEST(NetworkClientTest, ConnectToHost)
 {
+    bool is_connected = false;
+
     SimpleTestServer server(30001);
 
-    auto callback = [](std::string message) {};
-    NetworkClient client(callback);
+    auto on_connect = [&is_connected]() { is_connected = true; };
+    auto callback   = [](std::string message) {};
+    NetworkClient client(on_connect, callback);
 
-    EXPECT_NO_THROW({ client.connect("localhost", 30001); });
-}
+    auto netThread = std::thread([&client]() { client.run(); });
 
-TEST(NetworkClientTest, ConnectToInvalidHost)
-{
-    SimpleTestServer server(30002);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    auto callback = [](std::string message) {};
-    NetworkClient client(callback);
+    client.connect("127.0.0.1", 30001);
 
-    EXPECT_THROW({ client.connect("invalid.host.that.does.not.exist.12345", 30002); }, std::exception);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    EXPECT_TRUE(is_connected);
+
+    client.stop();
+    if (netThread.joinable()) {
+        netThread.join();
+    }
 }
 
 TEST(NetworkClientTest, SendAfterConnect)
 {
-    SimpleTestServer server(30003);
+    SimpleTestServer server(30002);
 
-    auto callback = [](std::string message) {};
-    NetworkClient client(callback);
-    client.connect("localhost", 30003);
+    auto on_connect = []() {};
+    auto callback   = [](std::string message) {};
+    NetworkClient client(on_connect, callback);
 
-    EXPECT_NO_THROW({ client.send("Hello, Server!"); });
+    auto netThread = std::thread([&client]() { client.run(); });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    client.connect("127.0.0.1", 30002);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    client.send("Hello, Server!");
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    client.stop();
+    if (netThread.joinable()) {
+        netThread.join();
+    }
 }
