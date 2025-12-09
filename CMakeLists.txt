@@ -32,7 +32,7 @@ target_link_libraries(uno-game-lib
 )
 target_link_libraries(uno-game-lib PUBLIC Slint::Slint)
 
-slint_target_sources(uno-game-lib src/ui/MainWindow.slint)
+slint_target_sources(uno-game-lib ui/MainWindow.slint)
 
 add_executable(uno-client src/client/main.cpp)
 target_link_libraries(uno-client
