@@ -25,10 +25,10 @@ namespace UNO::GAME {
     std::string Card::colorToString() const
     {
         switch (this->color_) {
-            case CardColor::RED: return "Red";
-            case CardColor::GREEN: return "Green";
-            case CardColor::BLUE: return "Blue";
-            case CardColor::YELLOW: return "Yellow";
+            case CardColor::RED: return "red";
+            case CardColor::GREEN: return "green";
+            case CardColor::BLUE: return "blue";
+            case CardColor::YELLOW: return "yellow";
             default: throw std::invalid_argument("Invalid card color");
         }
     }
@@ -46,11 +46,11 @@ namespace UNO::GAME {
             case CardType::NUM7: return "7";
             case CardType::NUM8: return "8";
             case CardType::NUM9: return "9";
-            case CardType::SKIP: return "Skip";
-            case CardType::REVERSE: return "Reverse";
-            case CardType::DRAW2: return "Draw 2";
-            case CardType::WILD: return "Wild";
-            case CardType::WILDDRAWFOUR: return "Wild Draw 4";
+            case CardType::SKIP: return "skip";
+            case CardType::REVERSE: return "reverse";
+            case CardType::DRAW2: return "draw_two";
+            case CardType::WILD: return "wild_wild";
+            case CardType::WILDDRAWFOUR: return "wild_draw_four";
             default: throw std::invalid_argument("Invalid card type");
         }
     }
@@ -61,7 +61,7 @@ namespace UNO::GAME {
         if (this->type_ == CardType::WILD || this->type_ == CardType::WILDDRAWFOUR) {
             return this->typeToString();
         }
-        return std::format("{} {}", this->colorToString(), this->typeToString());
+        return std::format("{}_{}", this->colorToString(), this->typeToString());
     }
 
     bool Card::operator<(const Card &other) const

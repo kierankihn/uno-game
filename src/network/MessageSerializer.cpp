@@ -118,16 +118,16 @@ namespace UNO::NETWORK {
 
     GAME::CardColor MessageSerializer::deserializeCardColor(const std::string &cardColor)
     {
-        if (cardColor == "Red") {
+        if (cardColor == "red") {
             return GAME::CardColor::RED;
         }
-        if (cardColor == "Blue") {
+        if (cardColor == "blue") {
             return GAME::CardColor::BLUE;
         }
-        if (cardColor == "Green") {
+        if (cardColor == "green") {
             return GAME::CardColor::GREEN;
         }
-        if (cardColor == "Yellow") {
+        if (cardColor == "yellow") {
             return GAME::CardColor::YELLOW;
         }
         throw std::invalid_argument("Invalid card color: '" + cardColor + "'. Expected: Red, Blue, Green, or Yellow");
@@ -165,19 +165,19 @@ namespace UNO::NETWORK {
         if (cardType == "9") {
             return GAME::CardType::NUM9;
         }
-        if (cardType == "Skip") {
+        if (cardType == "skip") {
             return GAME::CardType::SKIP;
         }
-        if (cardType == "Reverse") {
+        if (cardType == "reverse") {
             return GAME::CardType::REVERSE;
         }
-        if (cardType == "Draw 2") {
+        if (cardType == "draw_two") {
             return GAME::CardType::DRAW2;
         }
-        if (cardType == "Wild") {
+        if (cardType == "wild_wild") {
             return GAME::CardType::WILD;
         }
-        if (cardType == "Wild Draw 4") {
+        if (cardType == "wild_draw_four") {
             return GAME::CardType::WILDDRAWFOUR;
         }
         throw std::invalid_argument("Invalid card type: '" + cardType + "'. Expected: 0-9, Skip, Reverse, Draw 2, Wild, or Wild Draw 4");
