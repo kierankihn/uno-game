@@ -1,5 +1,6 @@
 import { ConnectPage } from "ConnectPage.slint";
 import { StartPage } from "StartPage.slint";
+import { GamePage, OtherPlayer, HandCard, CardColor, GameDirection } from "GamePage.slint";
 
 enum PageType {
     ConnectPage,
@@ -9,14 +10,33 @@ enum PageType {
 
 export component MainWindow inherits Window {
     in property <PageType> active-page: PageType.ConnectPage;
+
+    // ConnectPage
     in property <bool> is-connecting;
+
+    // StartPage
     in property <bool> is-ready;
+
+    // GamePage
+    in property <[OtherPlayer]> other-players;
+    in property <string> current-player-name;
+    in property <int> current-player-card-count;
+    in property <bool> current-player-has-uno;
+    in property <bool> is-current-player-turn;
+    in property <[HandCard]> hand-cards;
+    in property <image> discard-top-card;
+    in property <GameDirection> game-direction;
+    in property <CardColor> current-color;
 
     callback request-connect(string, string, string);
     callback request-start;
+    callback request-play-card(int, CardColor);
+    callback request-draw-card;
+    callback request-uno;
 
     width: 1920px;
     height: 1080px;
+    title: "UNO!";
 
     if root.active-page == PageType.ConnectPage: connect-page := ConnectPage {
         is-connecting: root.is-connecting;
@@ -28,6 +48,26 @@ export component MainWindow inherits Window {
         is-ready: root.is-ready;
         request-start => {
             root.request-start();
+        }
+    }
+    if root.active-page == PageType.GamePage: game-page := GamePage {
+        other-players: root.other-players;
+        current-player-name: root.current-player-name;
+        current-player-card-count: root.current-player-card-count;
+        current-player-has-uno: root.current-player-has-uno;
+        is-current-player-turn: root.is-current-player-turn;
+        hand-cards: root.hand-cards;
+        discard-top-card: root.discard-top-card;
+        game-direction: root.game-direction;
+        current-color: root.current-color;
+        request-play-card(index, card-color) => {
+            root.request-play-card(index, card-color);
+        }
+        request-draw-card => {
+            root.request-draw-card();
+        }
+        request-uno => {
+            root.request-uno();
         }
     }
 }
