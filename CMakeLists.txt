@@ -38,7 +38,7 @@ add_executable(uno-client src/client/main.cpp)
 target_link_libraries(uno-client
         PRIVATE uno-game-lib)
 
-if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+if (WIN32 AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     set_target_properties(uno-client PROPERTIES WIN32_EXECUTABLE ON)
 endif ()
 
