@@ -36,6 +36,7 @@ namespace UNO::UI {
                 case CardColor::Green: game_card_color = GAME::CardColor::GREEN; break;
                 case CardColor::Blue: game_card_color = GAME::CardColor::BLUE; break;
                 case CardColor::Yellow: game_card_color = GAME::CardColor::YELLOW; break;
+                default: std::unreachable();
             }
             CLIENT::PlayerPlayCardPayload payload = {static_cast<size_t>(card_id), game_card_color};
             this->callback_({CLIENT::PlayerActionType::PLAY_CARD, payload});
