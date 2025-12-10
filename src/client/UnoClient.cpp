@@ -107,8 +107,22 @@ namespace UNO::CLIENT {
 
     void UnoClient::handlePlayerPlayCard(PlayerPlayCardPayload payload)
     {
-        NETWORK::PlayCardPayload messagePayload = {payload.card};
-        NETWORK::Message message                = {NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::PLAY_CARD, messagePayload};
+        auto cards = this->clientGameState_->getCards();
+        auto card  = cards.begin();
+        for (size_t i = 0; i < payload.id; i++) {
+            card = std::next(card);
+        }
+
+        if ((card->getType() == GAME::CardType::WILD || card->getType() == GAME::CardType::WILDDRAWFOUR)
+            && card->getColor() != GAME::CardColor::RED) {
+            throw std::invalid_argument("Invalid card played by player");
+        }
+
+        NETWORK::PlayCardPayload messagePayload = {
+            {(card->getType() != GAME::CardType::WILD && card->getType() != GAME::CardType::WILDDRAWFOUR) ? card->getColor()
+                                                                                                          : payload.color,
+             card->getType()}};
+        NETWORK::Message message = {NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::PLAY_CARD, messagePayload};
         networkClient_->send(NETWORK::MessageSerializer::serialize(message));
     }
 

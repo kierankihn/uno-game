@@ -22,7 +22,8 @@ namespace UNO::CLIENT {
     struct PlayerStartGamePayload {};
 
     struct PlayerPlayCardPayload {
-        GAME::Card card;
+        size_t id;
+        GAME::CardColor color;
     };
 
     struct PlayerDrawCardPayload {};
