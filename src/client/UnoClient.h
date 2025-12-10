@@ -44,6 +44,7 @@ namespace UNO::CLIENT {
 
     public:
         UnoClient();
+        ~UnoClient();
 
         void run();
     };

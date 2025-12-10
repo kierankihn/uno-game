@@ -141,10 +141,17 @@ namespace UNO::CLIENT {
         gameUI_ = std::make_shared<UI::GameUI>([this](const PlayerAction &action) { this->handlePlayerAction(action); });
     }
 
+    UnoClient::~UnoClient()
+    {
+        networkClient_->stop();
+        if (networkThread_.joinable()) {
+            networkThread_.join();
+        }
+    }
+
     void UnoClient::run()
     {
         networkThread_ = std::thread([this]() { this->networkClient_->run(); });
         gameUI_->run();
     }
-
 }   // namespace UNO::CLIENT
