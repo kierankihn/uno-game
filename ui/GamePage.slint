@@ -613,6 +613,7 @@ export component GamePage inherits Window {
                     }
 
                     TouchArea {
+                        enabled: root.is-current-player-turn;
                         width: parent.width;
                         height: parent.height;
                         clicked => {
@@ -664,7 +665,7 @@ export component GamePage inherits Window {
                         player-name: current-player-name;
                         card-count: current-player-card-count;
                         has-uno: current-player-has-uno;
-                        is-current-turn: true;
+                        is-current-turn: is-current-player-turn;
                     }
                 }
 
