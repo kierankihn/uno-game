@@ -46,8 +46,7 @@ namespace UNO::SERVER {
                 throw std::invalid_argument("Invalid message payload type from client");
             }
             if (this->serverGameState_.getServerGameStage() == GAME::ServerGameStage::IN_GAME
-                && this->networkIdToGameId.at(playerId)
-                       != this->serverGameState_.getCurrentPlayer() - this->serverGameState_.getPlayers().begin()) {
+                && this->networkIdToGameId.at(playerId) != this->serverGameState_.getCurrentPlayerId()) {
                 throw std::invalid_argument("Invalid player message: not this player's turn");
             }
             if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::DRAW_CARD) {
@@ -67,7 +66,7 @@ namespace UNO::SERVER {
         for (const auto &player : serverGameState_.getPlayers()) {
             players.emplace_back(player.getName(), player.getRemainingCardCount(), player.getIsUno());
         }
-        size_t currentPlayerIndex = static_cast<size_t>(serverGameState_.getCurrentPlayer() - serverGameState_.getPlayers().begin());
+        size_t currentPlayerIndex = serverGameState_.getCurrentPlayerId();
         for (size_t i = 0; i < playerCount; i++) {
             NETWORK::InitGamePayload payload = {
                 i, players, serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), currentPlayerIndex};

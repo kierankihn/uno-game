@@ -107,6 +107,10 @@ namespace UNO::GAME {
         this->player_.setName(name);
     }
 
+    size_t ClientGameState::getSelfId() const
+    {
+        return this->self_ - this->players_.begin();
+    }
 
     void ClientGameState::nextPlayer()
     {

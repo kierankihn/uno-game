@@ -159,9 +159,9 @@ namespace UNO::GAME {
         [[nodiscard]] const std::vector<PlayerStateType> &getPlayers() const;
 
         /**
-         * @return 当前玩家对应的 iterator
+         * @return 当前玩家对应的 ID
          */
-        [[nodiscard]] std::vector<PlayerStateType>::iterator getCurrentPlayer() const;
+        [[nodiscard]] size_t getCurrentPlayerId() const;
 
         /**
          * @return 弃牌堆
@@ -206,9 +206,9 @@ namespace UNO::GAME {
     }
 
     template<PlayerStateTypeConcept PlayerStateType>
-    std::vector<PlayerStateType>::iterator GameState<PlayerStateType>::getCurrentPlayer() const
+    size_t GameState<PlayerStateType>::getCurrentPlayerId() const
     {
-        return this->currentPlayer_;
+        return this->currentPlayer_ - this->players_.begin();
     }
 
     template<PlayerStateTypeConcept PlayerStateType>
