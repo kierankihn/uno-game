@@ -1,13 +1,12 @@
 import {Button} from "Components.slint";
 
 export component StartPage inherits Window {
-    width: 1920px;
-    height: 1080px;
-    title: "UNO!";
-
     in property <bool> is-ready;
 
     callback request-start;
+
+    width: 1920px;
+    height: 1080px;
 
     // 背景渐变 (从左上角的米色到右下角的淡粉色)
     Rectangle {
