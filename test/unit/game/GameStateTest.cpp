@@ -28,67 +28,67 @@ TEST(game_state_test, game_state_test_1)
     ASSERT_EQ(players[2].getName(), "qkp");
     ASSERT_EQ(players[3].getName(), "lzh");
 
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "pkq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 0);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "kpq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 1);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "qkp");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 2);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "lzh");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 3);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "pkq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 0);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::REVERSE));
     ASSERT_EQ(clientGameState.getIsReversed(), true);
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "lzh");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 3);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "qkp");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 2);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "kpq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 1);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "pkq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 0);
 
     clientGameState.updateStateByDraw();
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "lzh");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 3);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::SKIP));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "kpq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 1);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::DRAW2));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "pkq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 0);
     ASSERT_EQ(clientGameState.getDrawCount(), 2);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::DRAW2));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "lzh");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 3);
     ASSERT_EQ(clientGameState.getDrawCount(), 4);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::WILDDRAWFOUR));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "qkp");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 2);
     ASSERT_EQ(clientGameState.getDrawCount(), 8);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::WILDDRAWFOUR));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "kpq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 1);
     ASSERT_EQ(clientGameState.getDrawCount(), 12);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::WILDDRAWFOUR));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "pkq");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 0);
     ASSERT_EQ(clientGameState.getDrawCount(), 16);
 
     clientGameState.updateStateByCard(UNO::GAME::Card(UNO::GAME::CardColor::BLUE, UNO::GAME::CardType::WILDDRAWFOUR));
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "lzh");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 3);
     ASSERT_EQ(clientGameState.getDrawCount(), 20);
 
     clientGameState.updateStateByDraw();
     ASSERT_EQ(clientGameState.getPlayers()[3].getName(), "lzh");
     ASSERT_EQ(clientGameState.getPlayers()[3].getRemainingCardCount(), 120);
-    ASSERT_EQ(clientGameState.getCurrentPlayer()->getName(), "qkp");
+    ASSERT_EQ(clientGameState.getCurrentPlayerId(), 2);
     ASSERT_EQ(clientGameState.getDrawCount(), 0);
 }
 
@@ -108,11 +108,11 @@ TEST(game_state_test, game_state_test_2)
     }
 
     while (true) {
-        for (auto it = serverGameState.getCurrentPlayer()->getCards().begin();; it++) {
-            const auto player = serverGameState.getCurrentPlayer();
-            auto prevCards    = player->getCards();
-            if (it == serverGameState.getCurrentPlayer()->getCards().end()) {
-                size_t prevCount = player->getRemainingCardCount();
+        for (auto it = serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()].getCards().begin();; it++) {
+            const auto &player = serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()];
+            auto prevCards     = player.getCards();
+            if (it == serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()].getCards().end()) {
+                size_t prevCount = player.getRemainingCardCount();
                 size_t drawCount = serverGameState.getDrawCount();
                 if (drawCount == 0) {
                     drawCount = 1;
@@ -120,11 +120,11 @@ TEST(game_state_test, game_state_test_2)
 
                 serverGameState.updateStateByDraw();
 
-                size_t afterCount = player->getRemainingCardCount();
+                size_t afterCount = player.getRemainingCardCount();
                 ASSERT_EQ(prevCount + drawCount, afterCount);
 
                 for (auto card : prevCards) {
-                    ASSERT_LE(prevCards.count(card), player->getCards().count(card));
+                    ASSERT_LE(prevCards.count(card), player.getCards().count(card));
                 }
 
                 break;
@@ -132,17 +132,17 @@ TEST(game_state_test, game_state_test_2)
 
             if (it->canBePlayedOn(serverGameState.getDiscardPile().getFront(), serverGameState.getDrawCount())) {
                 auto card        = *it;
-                size_t prevCount = player->getCards().count(card);
+                size_t prevCount = player.getCards().count(card);
 
                 serverGameState.updateStateByCard(card);
 
-                size_t afterCount = player->getCards().count(card);
+                size_t afterCount = player.getCards().count(card);
                 ASSERT_EQ(prevCount - 1, afterCount);
-                ASSERT_EQ(prevCards.size() - 1, player->getCards().size());
+                ASSERT_EQ(prevCards.size() - 1, player.getCards().size());
 
-                for (auto i : player->getCards()) {
+                for (auto i : player.getCards()) {
                     if (i.getType() != card.getType() || i.getColor() != card.getColor()) {
-                        ASSERT_EQ(player->getCards().count(i), prevCards.count(i));
+                        ASSERT_EQ(player.getCards().count(i), prevCards.count(i));
                     }
                 }
 
@@ -150,9 +150,10 @@ TEST(game_state_test, game_state_test_2)
             }
         }
 
-        ASSERT_EQ(serverGameState.getCurrentPlayer()->getRemainingCardCount(), serverGameState.getCurrentPlayer()->getCards().size());
+        ASSERT_EQ(serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()].getRemainingCardCount(),
+                  serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()].getCards().size());
 
-        if (serverGameState.getCurrentPlayer()->getRemainingCardCount() == 0) {
+        if (serverGameState.getPlayers()[serverGameState.getCurrentPlayerId()].getRemainingCardCount() == 0) {
             break;
         }
     }

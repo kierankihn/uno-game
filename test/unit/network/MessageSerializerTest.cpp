@@ -81,10 +81,10 @@ TEST(MessageSerializerTest, SerializeDrawCardMessage)
     EXPECT_EQ(json["payload"]["draw_count"], 5);
     EXPECT_TRUE(json["payload"]["cards"].is_array());
     EXPECT_EQ(json["payload"]["cards"].size(), 2);
-    EXPECT_EQ(json["payload"]["cards"][0]["card_color"], "Red");
+    EXPECT_EQ(json["payload"]["cards"][0]["card_color"], "red");
     EXPECT_EQ(json["payload"]["cards"][0]["card_type"], "5");
-    EXPECT_EQ(json["payload"]["cards"][1]["card_color"], "Blue");
-    EXPECT_EQ(json["payload"]["cards"][1]["card_type"], "Skip");
+    EXPECT_EQ(json["payload"]["cards"][1]["card_color"], "blue");
+    EXPECT_EQ(json["payload"]["cards"][1]["card_type"], "skip");
 }
 
 TEST(MessageSerializerTest, SerializeDrawCardMessageWithZero)
@@ -132,14 +132,14 @@ TEST(MessageSerializerTest, SerializePlayCardMessage)
 
     EXPECT_EQ(json["status_code"], "OK");
     EXPECT_EQ(json["payload_type"], "PLAY_CARD");
-    EXPECT_EQ(json["payload"]["card"]["card_color"], "Red");
+    EXPECT_EQ(json["payload"]["card"]["card_color"], "red");
     EXPECT_EQ(json["payload"]["card"]["card_type"], "5");
 }
 
 TEST(MessageSerializerTest, SerializePlayCardMessageAllColors)
 {
     std::vector<std::pair<CardColor, std::string>> colors = {
-        {CardColor::RED, "Red"}, {CardColor::BLUE, "Blue"}, {CardColor::GREEN, "Green"}, {CardColor::YELLOW, "Yellow"}};
+        {CardColor::RED, "red"}, {CardColor::BLUE, "blue"}, {CardColor::GREEN, "green"}, {CardColor::YELLOW, "yellow"}};
 
     for (const auto &[color, expected] : colors) {
         Card card(color, CardType::NUM1);
@@ -166,11 +166,11 @@ TEST(MessageSerializerTest, SerializePlayCardMessageAllTypes)
                                                            {CardType::NUM7, "7"},
                                                            {CardType::NUM8, "8"},
                                                            {CardType::NUM9, "9"},
-                                                           {CardType::SKIP, "Skip"},
-                                                           {CardType::REVERSE, "Reverse"},
-                                                           {CardType::DRAW2, "Draw 2"},
-                                                           {CardType::WILD, "Wild"},
-                                                           {CardType::WILDDRAWFOUR, "Wild Draw 4"}};
+                                                           {CardType::SKIP, "skip"},
+                                                           {CardType::REVERSE, "reverse"},
+                                                           {CardType::DRAW2, "draw_two"},
+                                                           {CardType::WILD, "wild_wild"},
+                                                           {CardType::WILDDRAWFOUR, "wild_draw_four"}};
 
     for (const auto &[type, expected] : types) {
         Card card(CardColor::RED, type);
@@ -341,7 +341,7 @@ TEST(MessageSerializerTest, DeserializeStartGameMessage)
 TEST(MessageSerializerTest, DeserializeDrawCardMessage)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":5,"cards":[{"card_color":"Red","card_type":"5"},{"card_color":"Blue","card_type":"Skip"}]}})";
+        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":5,"cards":[{"card_color":"red","card_type":"5"},{"card_color":"blue","card_type":"skip"}]}})";
 
     Message message = MessageSerializer::deserialize(json);
 
@@ -371,7 +371,7 @@ TEST(MessageSerializerTest, DeserializeDrawCardMessageWithEmptyCards)
 
 TEST(MessageSerializerTest, DeserializePlayCardMessage)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":"5"}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":"5"}}})";
 
     Message message = MessageSerializer::deserialize(json);
 
@@ -390,8 +390,8 @@ TEST(MessageSerializerTest, DeserializeInitGameMessage)
         "payload":{
             "player_id":42,
             "players": [],
-            "discard_pile":[{"card_color":"Red","card_type":"5"}],
-            "hand_card":[{"card_color":"Blue","card_type":"Skip"}],
+            "discard_pile":[{"card_color":"red","card_type":"5"}],
+            "hand_card":[{"card_color":"blue","card_type":"skip"}],
             "current_player":2
         }
     })";
@@ -725,7 +725,7 @@ TEST(MessageSerializerTest, DeserializeDrawCardWithStringCards)
 TEST(MessageSerializerTest, DeserializeDrawCardWithInvalidCardInArray)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":2,"cards":[{"card_color":"Red","card_type":"5"},"invalid"]}})";
+        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":2,"cards":[{"card_color":"red","card_type":"5"},"invalid"]}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -739,7 +739,7 @@ TEST(MessageSerializerTest, DeserializeDrawCardWithInvalidCardColor)
 TEST(MessageSerializerTest, DeserializeDrawCardWithInvalidCardType)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":1,"cards":[{"card_color":"Red","card_type":"Invalid"}]}})";
+        R"({"status_code":"OK","payload_type":"DRAW_CARD","payload":{"draw_count":1,"cards":[{"card_color":"red","card_type":"Invalid"}]}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -777,7 +777,7 @@ TEST(MessageSerializerTest, DeserializePlayCardWithArrayCard)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithStringCard)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":"Red 5"}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":"red 5"}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -789,7 +789,7 @@ TEST(MessageSerializerTest, DeserializePlayCardWithMissingCardColor)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithMissingCardType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red"}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red"}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -801,7 +801,7 @@ TEST(MessageSerializerTest, DeserializePlayCardWithInvalidCardColor)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithInvalidCardType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":"Invalid"}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":"Invalid"}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -813,7 +813,7 @@ TEST(MessageSerializerTest, DeserializePlayCardWithNumberCardColor)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithNumberCardType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":5}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":5}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -825,7 +825,7 @@ TEST(MessageSerializerTest, DeserializePlayCardWithNullCardColor)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithNullCardType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":null}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":null}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -837,19 +837,19 @@ TEST(MessageSerializerTest, DeserializePlayCardWithEmptyCardColor)
 
 TEST(MessageSerializerTest, DeserializePlayCardWithEmptyCardType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":""}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":""}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializePlayCardWithCaseSensitiveColor)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":"5"}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":"5"}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
 TEST(MessageSerializerTest, DeserializePlayCardWithCaseSensitiveType)
 {
-    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"Red","card_type":"skip"}}})";
+    std::string json = R"({"status_code":"OK","payload_type":"PLAY_CARD","payload":{"card":{"card_color":"red","card_type":"Skip"}}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -989,7 +989,7 @@ TEST(MessageSerializerTest, DeserializeInitGameWithInvalidCardInDiscardPile)
 TEST(MessageSerializerTest, DeserializeInitGameWithInvalidCardInHandCard)
 {
     std::string json =
-        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[{"card_color":"Red","card_type":"Invalid"}],"current_player":0,"players": []}})";
+        R"({"status_code":"OK","payload_type":"INIT_GAME","payload":{"player_id":0,"discard_pile":[],"hand_card":[{"card_color":"red","card_type":"Invalid"}],"current_player":0,"players": []}})";
     EXPECT_THROW(MessageSerializer::deserialize(json), std::invalid_argument);
 }
 
@@ -1102,7 +1102,7 @@ TEST(MessageSerializerTest, DeserializeCompactJSON)
 TEST(MessageSerializerTest, DeserializeAllCardColors)
 {
     std::vector<std::pair<std::string, CardColor>> colors = {
-        {"Red", CardColor::RED}, {"Blue", CardColor::BLUE}, {"Green", CardColor::GREEN}, {"Yellow", CardColor::YELLOW}};
+        {"red", CardColor::RED}, {"blue", CardColor::BLUE}, {"green", CardColor::GREEN}, {"yellow", CardColor::YELLOW}};
 
     for (const auto &[colorStr, colorEnum] : colors) {
         nlohmann::json json = {
@@ -1125,15 +1125,15 @@ TEST(MessageSerializerTest, DeserializeAllCardTypes)
                                                            {"7", CardType::NUM7},
                                                            {"8", CardType::NUM8},
                                                            {"9", CardType::NUM9},
-                                                           {"Skip", CardType::SKIP},
-                                                           {"Reverse", CardType::REVERSE},
-                                                           {"Draw 2", CardType::DRAW2},
-                                                           {"Wild", CardType::WILD},
-                                                           {"Wild Draw 4", CardType::WILDDRAWFOUR}};
+                                                           {"skip", CardType::SKIP},
+                                                           {"reverse", CardType::REVERSE},
+                                                           {"draw_two", CardType::DRAW2},
+                                                           {"wild_wild", CardType::WILD},
+                                                           {"wild_draw_four", CardType::WILDDRAWFOUR}};
 
     for (const auto &[typeStr, typeEnum] : types) {
         nlohmann::json json = {
-            {"status_code", "OK"}, {"payload_type", "PLAY_CARD"}, {"payload", {{"card", {{"card_color", "Red"}, {"card_type", typeStr}}}}}};
+            {"status_code", "OK"}, {"payload_type", "PLAY_CARD"}, {"payload", {{"card", {{"card_color", "red"}, {"card_type", typeStr}}}}}};
         Message message = MessageSerializer::deserialize(json.dump());
         auto payload    = std::get<PlayCardPayload>(message.getMessagePayload());
         EXPECT_EQ(payload.card.getType(), typeEnum);
@@ -1162,7 +1162,7 @@ TEST(MessageSerializerTest, DeserializeHugeArray)
     json["payload"]["discard_pile"] = nlohmann::json::array();
     json["payload"]["players"]      = nlohmann::json::array();
     for (int i = 0; i < 10000; ++i) {
-        json["payload"]["discard_pile"].push_back({{"card_color", "Red"}, {"card_type", "5"}});
+        json["payload"]["discard_pile"].push_back({{"card_color", "red"}, {"card_type", "5"}});
     }
     json["payload"]["hand_card"]      = nlohmann::json::array();
     json["payload"]["current_player"] = 0;
