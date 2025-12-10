@@ -2,6 +2,7 @@ import {Button} from "Components.slint";
 
 export component StartPage inherits Window {
     in property <bool> is-ready;
+    in property <bool> is-restart;
 
     callback request-start;
 
@@ -44,7 +45,7 @@ export component StartPage inherits Window {
                 }
 
                 Text {
-                    text: "连接成功，所有玩家准备后开始游戏";
+                    text: is-restart ? "游戏结束，重新准备以重新开始游戏" : "连接成功，所有玩家准备后开始游戏";
                     font-size: 14px;
                     color: #666666;
                     horizontal-alignment: center;

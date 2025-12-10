@@ -179,7 +179,7 @@ namespace UNO::GAME {
 
     void ClientGameState::endGame()
     {
-        this->clientGameStage_ = ClientGameStage::PRE_GAME;
+        this->clientGameStage_ = ClientGameStage::AFTER_GAME;
         this->player_.clear();
     }
 

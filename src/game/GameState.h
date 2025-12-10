@@ -304,7 +304,7 @@ namespace UNO::GAME {
     }
 
 
-    enum class ClientGameStage { PENDING_CONNECTION, PRE_GAME, ACTIVE, IDLE };
+    enum class ClientGameStage { PENDING_CONNECTION, PRE_GAME, ACTIVE, IDLE, AFTER_GAME };
 
     class ClientGameState final : public GameState<ClientPlayerState> {
     private:

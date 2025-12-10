@@ -16,6 +16,7 @@ export component MainWindow inherits Window {
 
     // StartPage
     in property <bool> is-ready;
+    in property <bool> is-restart;
 
     // GamePage
     in property <[OtherPlayer]> other-players;
@@ -46,6 +47,7 @@ export component MainWindow inherits Window {
     }
     if root.active-page == PageType.StartPage: start-page := StartPage {
         is-ready: root.is-ready;
+        is-restart: root.is-restart;
         request-start => {
             root.request-start();
         }

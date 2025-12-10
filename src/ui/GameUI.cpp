@@ -58,11 +58,15 @@ namespace UNO::UI {
         if (clientGameState->getClientGameStage() == GAME::ClientGameStage::PENDING_CONNECTION) {
             window_->set_active_page(PageType::ConnectPage);
         }
-        if (clientGameState->getClientGameStage() == GAME::ClientGameStage::PRE_GAME) {
+        if (clientGameState->getClientGameStage() == GAME::ClientGameStage::PRE_GAME
+            || clientGameState->getClientGameStage() == GAME::ClientGameStage::AFTER_GAME) {
             window_->set_active_page(PageType::StartPage);
+            window_->set_is_restart(clientGameState->getClientGameStage() == GAME::ClientGameStage::AFTER_GAME);
         }
         if (clientGameState->getClientGameStage() == GAME::ClientGameStage::ACTIVE
             || clientGameState->getClientGameStage() == GAME::ClientGameStage::IDLE) {
+            window_->set_is_ready(false);
+
             window_->set_active_page(PageType::GamePage);
 
             auto players = clientGameState->getPlayers();
