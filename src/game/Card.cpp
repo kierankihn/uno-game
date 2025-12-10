@@ -66,7 +66,8 @@ namespace UNO::GAME {
 
     bool Card::operator<(const Card &other) const
     {
-        if (this->color_ != other.color_) {
+        if (this->color_ != other.color_ && this->type_ != CardType::WILD && this->type_ != CardType::WILDDRAWFOUR
+            && other.type_ != CardType::WILD && other.type_ != CardType::WILDDRAWFOUR) {
             return this->color_ < other.color_;
         }
         return this->type_ < other.type_;
