@@ -80,7 +80,7 @@ namespace UNO::UI {
             }
 
             auto self = other_player.begin() + static_cast<int>(clientGameState->getSelfId());
-            std::ranges::rotate(other_player, self);
+            std::ranges::rotate(other_player, std::next(self));
             other_player.pop_back();
 
             auto other_player_slint = std::make_shared<slint::VectorModel<OtherPlayer>>();
