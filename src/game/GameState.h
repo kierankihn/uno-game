@@ -319,14 +319,21 @@ namespace UNO::GAME {
         ClientGameState();
 
         /**
-         * 设置玩家名字
-         */
-        void setPlayerName(const std::string &name);
-        /**
          * 获取当前玩家的名字
          * @return 玩家名字
          */
         [[nodiscard]] std::string getPlayerName() const;
+
+        /**
+         * 设置玩家名字
+         */
+        void setPlayerName(const std::string &name);
+
+        /**
+         * 获取客户端对应的玩家 ID
+         * @return 客户端对应的玩家 ID
+         */
+        [[nodiscard]] size_t getSelfId() const;
 
         /**
          * 获得当前手牌
