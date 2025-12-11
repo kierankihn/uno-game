@@ -58,12 +58,19 @@ target_link_libraries(uno-server PRIVATE uno-game-lib)
 # Google Test
 add_subdirectory(test)
 
-# 复制动态库
+
 foreach (target uno-client uno-server)
+    # 复制动态库
     add_custom_command(TARGET ${target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_RUNTIME_DLLS:${target}>
             $<TARGET_FILE_DIR:${target}>
             COMMAND_EXPAND_LISTS
+    )
+    # 复制资源文件
+    add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/assets
+            $<TARGET_FILE_DIR:${target}>/assets
     )
 endforeach ()
