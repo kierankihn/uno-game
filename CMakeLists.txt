@@ -30,6 +30,12 @@ target_link_libraries(uno-game-lib PUBLIC Slint::Slint)
 target_link_libraries(uno-game-lib PUBLIC argparse::argparse)
 target_link_libraries(uno-game-lib PUBLIC spdlog::spdlog)
 
+# Enable fine-grained spdlog levels: in Debug build, compile-in trace/debug; in others, keep info+
+target_compile_definitions(uno-game-lib PUBLIC
+        $<$<CONFIG:Debug>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE>
+        $<$<NOT:$<CONFIG:Debug>>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO>
+)
+
 slint_target_sources(uno-game-lib ui/MainWindow.slint)
 
 # Uno Client
