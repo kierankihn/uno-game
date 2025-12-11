@@ -34,7 +34,10 @@ target_link_libraries(uno-game-lib PUBLIC Slint::Slint)
 
 slint_target_sources(uno-game-lib ui/MainWindow.slint)
 
-add_executable(uno-client src/client/main.cpp)
+add_executable(uno-client
+        src/client/main.cpp
+        assets/uno.rc
+)
 target_link_libraries(uno-client
         PRIVATE uno-game-lib)
 
@@ -42,7 +45,10 @@ if (WIN32 AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     set_target_properties(uno-client PROPERTIES WIN32_EXECUTABLE ON)
 endif ()
 
-add_executable(uno-server src/server/main.cpp)
+add_executable(uno-server
+        src/server/main.cpp
+        assets/uno.rc
+)
 target_link_libraries(uno-server
         PRIVATE uno-game-lib)
 target_link_libraries(uno-server
