@@ -232,18 +232,15 @@ component DirectionRingOrbs inherits Rectangle {
     in property <CardColor> current-color: CardColor.Red;
     in property <int> ring-width: 500;
     in property <int> ring-height: 280;
-
-    // 单一的动画计数器，持续递增
-    in-out property <int> cycle: 0;
     property <color> ring-color: current-color == CardColor.Red ? #F44336 : current-color == CardColor.Blue ? #2196F3 : current-color == CardColor.Green ? #4CAF50 : current-color == CardColor.Yellow ? #FFEB3B : #9E9E9E;
     property <float> a: ring-width / 2;
     property <float> b: ring-height / 2;
 
-    // 基础角度（持续增加）
-    property <float> base-angle: cycle * 360;
+    property <float> base-angle: 0;
     animate base-angle {
         duration: 8s;
         easing: linear;
+        iteration-count: -1;
     }
 
     // 方向系数：顺时针为1，逆时针为-1
@@ -303,18 +300,9 @@ component DirectionRingOrbs inherits Rectangle {
         drop-shadow-color: ring-color;
     }
 
-    // 递增计数器
-    Timer {
-        interval: 8s;
-        running: true;
-        triggered => {
-            cycle = cycle + 1;
-        }
-    }
-
     // 初始化时启动动画
     init => {
-        cycle = 1;
+        base-angle = 360;
     }
 }
 
