@@ -8,6 +8,7 @@ find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
 find_package(argparse REQUIRED)
 find_package(Slint REQUIRED)
+find_package(spdlog REQUIRED)
 
 # Uno Game Library
 add_library(uno-game-lib
@@ -15,6 +16,7 @@ add_library(uno-game-lib
         src/game/CardTile.cpp
         src/game/Player.cpp
         src/game/GameState.cpp
+        src/common/Logger.cpp
         src/common/Utils.cpp
         src/network/Message.cpp
         src/network/MessageSerializer.cpp
@@ -25,7 +27,8 @@ add_library(uno-game-lib
 target_link_libraries(uno-game-lib PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(uno-game-lib PUBLIC asio::asio)
 target_link_libraries(uno-game-lib PUBLIC Slint::Slint)
-target_link_libraries(uno-game-lib PRIVATE argparse::argparse)
+target_link_libraries(uno-game-lib PUBLIC argparse::argparse)
+target_link_libraries(uno-game-lib PUBLIC spdlog::spdlog)
 
 slint_target_sources(uno-game-lib ui/MainWindow.slint)
 

@@ -7,12 +7,14 @@
 #include "UnoServer.h"
 
 #include "../network/MessageSerializer.h"
+#include <spdlog/spdlog.h>
 
 namespace UNO::SERVER {
     UnoServer::UnoServer(uint16_t port) :
         networkServer_(port, [this](size_t playerId, const std::string &message) { this->handlePlayerMessage(playerId, message); }),
         playerCount(0)
     {
+        SPDLOG_INFO("UnoServer initialized on port {}", port);
     }
 
     void UnoServer::handlePlayerMessage(size_t playerId, const std::string &message)
@@ -20,6 +22,8 @@ namespace UNO::SERVER {
         auto playerMessage = NETWORK::MessageSerializer::deserialize(message);
 
         if (playerMessage.getMessageStatus() == NETWORK::MessageStatus::OK) {
+            SPDLOG_DEBUG("Processing message from player {}, type: {}", playerId, static_cast<int>(playerMessage.getMessagePayloadType()));
+
             if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::JOIN_GAME) {
                 auto playerName = std::get<NETWORK::JoinGamePayload>(playerMessage.getMessagePayload()).playerName;
 
@@ -27,12 +31,15 @@ namespace UNO::SERVER {
                 this->gameIdToNetworkId[this->playerCount] = playerId;
                 this->playerCount++;
                 this->serverGameState_.addPlayer(GAME::ServerPlayerState{playerName, 0, false});
+                SPDLOG_INFO("Player {} joined with name '{}', game ID: {}", playerId, playerName, this->playerCount - 1);
             }
-            if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::START_GAME) {
+            else if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::START_GAME) {
                 this->isReadyToStart[networkIdToGameId[playerId]] = true;
+                SPDLOG_INFO("Player {} (game ID: {}) is ready to start", playerId, networkIdToGameId[playerId]);
 
                 for (size_t i = 0; i <= this->playerCount; i++) {
                     if (i == this->playerCount) {
+                        SPDLOG_INFO("All {} players ready, starting game", this->playerCount);
                         this->handleStartGame();
                         break;
                     }
@@ -41,25 +48,41 @@ namespace UNO::SERVER {
                     }
                 }
             }
-            if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::INIT_GAME
-                || playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::END_GAME) {
+            else if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::INIT_GAME
+                     || playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::END_GAME) {
+                SPDLOG_ERROR(
+                    "Invalid message payload type from client {}: {}", playerId, static_cast<int>(playerMessage.getMessagePayloadType()));
                 throw std::invalid_argument("Invalid message payload type from client");
             }
-            if (this->serverGameState_.getServerGameStage() == GAME::ServerGameStage::IN_GAME
-                && this->networkIdToGameId.at(playerId) != this->serverGameState_.getCurrentPlayerId()) {
+            else if (this->serverGameState_.getServerGameStage() == GAME::ServerGameStage::IN_GAME
+                     && this->networkIdToGameId.at(playerId) != this->serverGameState_.getCurrentPlayerId()) {
+                SPDLOG_WARN("Player {} sent message but it's not their turn (current: {})",
+                            this->networkIdToGameId.at(playerId),
+                            this->serverGameState_.getCurrentPlayerId());
                 throw std::invalid_argument("Invalid player message: not this player's turn");
             }
-            if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::DRAW_CARD) {
+            else if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::DRAW_CARD) {
+                SPDLOG_INFO("Player {} (game ID: {}) draws card", playerId, this->networkIdToGameId.at(playerId));
                 this->handleDrawCard(playerId);
             }
-            if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::PLAY_CARD) {
-                this->handlePlayCard(playerId, std::get<NETWORK::PlayCardPayload>(playerMessage.getMessagePayload()).card);
+            else if (playerMessage.getMessagePayloadType() == NETWORK::MessagePayloadType::PLAY_CARD) {
+                auto card = std::get<NETWORK::PlayCardPayload>(playerMessage.getMessagePayload()).card;
+                SPDLOG_INFO("Player {} (game ID: {}) plays card: color={}, type={}",
+                            playerId,
+                            this->networkIdToGameId.at(playerId),
+                            card.colorToString(),
+                            card.typeToString());
+                this->handlePlayCard(playerId, card);
             }
+        }
+        else {
+            SPDLOG_ERROR("Received message with error status from player {}", playerId);
         }
     }
 
     void UnoServer::handleStartGame()
     {
+        SPDLOG_INFO("Initializing game state");
         serverGameState_.init();
         std::vector<GAME::ClientPlayerState> players;
         players.reserve(serverGameState_.getPlayers().size());
@@ -67,18 +90,23 @@ namespace UNO::SERVER {
             players.emplace_back(player.getName(), player.getRemainingCardCount(), player.getIsUno());
         }
         size_t currentPlayerIndex = serverGameState_.getCurrentPlayerId();
+        SPDLOG_INFO("Game started, current player index: {}", currentPlayerIndex);
+
         for (size_t i = 0; i < playerCount; i++) {
             NETWORK::InitGamePayload payload = {
                 i, players, serverGameState_.getDiscardPile(), serverGameState_.getPlayers()[i].getCards(), currentPlayerIndex};
             this->networkServer_.send(
                 gameIdToNetworkId.at(i),
                 NETWORK::MessageSerializer::serialize({NETWORK::MessageStatus::OK, NETWORK::MessagePayloadType::INIT_GAME, payload}));
+            SPDLOG_DEBUG("Sent INIT_GAME to player {}", i);
         }
     }
 
     void UnoServer::handleDrawCard(size_t playerId)
     {
         auto cards = this->serverGameState_.updateStateByDraw();
+        SPDLOG_INFO("Player {} drew {} card(s)", this->networkIdToGameId.at(playerId), cards.size());
+
         for (size_t i = 0; i < playerCount; i++) {
             auto networkId = gameIdToNetworkId.at(i);
             NETWORK::DrawCardPayload payload;
@@ -103,6 +131,7 @@ namespace UNO::SERVER {
         for (const auto &player : this->serverGameState_.getPlayers()) {
             if (player.isEmpty()) {
                 gameEnded = true;
+                SPDLOG_INFO("Player '{}' wins the game!", player.getName());
                 break;
             }
         }
@@ -120,6 +149,7 @@ namespace UNO::SERVER {
 
     void UnoServer::handleEndGame()
     {
+        SPDLOG_INFO("Game ended, resetting to pre-game state");
         this->serverGameState_.endGame();
 
         NETWORK::EndGamePayload payload{};
@@ -136,6 +166,7 @@ namespace UNO::SERVER {
 
     void UnoServer::run()
     {
+        SPDLOG_INFO("UnoServer starting");
         this->networkServer_.run();
     }
 

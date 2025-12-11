@@ -7,6 +7,7 @@
 #include "GameState.h"
 
 #include <ranges>
+#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <utility>
 
@@ -141,9 +142,11 @@ namespace UNO::GAME {
         this->self_          = this->players_.begin() + static_cast<int>(selfIndex);
         if (this->self_ == this->currentPlayer_) {
             this->clientGameStage_ = ClientGameStage::ACTIVE;
+            SPDLOG_INFO("Client game initialized: {} players, self index: {}, it's our turn", players.size(), selfIndex);
         }
         else {
             this->clientGameStage_ = ClientGameStage::IDLE;
+            SPDLOG_INFO("Client game initialized: {} players, self index: {}, waiting for turn", players.size(), selfIndex);
         }
     }
 
@@ -179,6 +182,7 @@ namespace UNO::GAME {
 
     void ClientGameState::endGame()
     {
+        SPDLOG_INFO("Client game ended");
         this->clientGameStage_ = ClientGameStage::AFTER_GAME;
         this->player_.clear();
     }
@@ -190,19 +194,25 @@ namespace UNO::GAME {
         long long currentPlayerIndex = this->currentPlayer_ - this->players_.begin();
         this->players_.push_back(std::move(playerState));
         this->currentPlayer_ = this->players_.begin() + currentPlayerIndex;
+        SPDLOG_DEBUG("Player '{}' added to game state, total players: {}", playerState.getName(), this->players_.size());
     }
 
     void ServerGameState::init()
     {
+        SPDLOG_INFO("Initializing server game state");
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
             discardPile_.add(deck_.draw());
         }
+        SPDLOG_DEBUG("Initial discard pile card: color={}, type={}",
+                     discardPile_.getFront().colorToString(),
+                     discardPile_.getFront().typeToString());
 
         for (size_t i = 0; i < 7; i++) {
             for (auto &player : this->players_) {
                 player.draw(1, this->deck_.draw(1));
             }
         }
+        SPDLOG_INFO("Dealt 7 cards to each of {} players", this->players_.size());
 
         this->serverGameStage_ = ServerGameStage::IN_GAME;
     }
@@ -212,6 +222,7 @@ namespace UNO::GAME {
         if (this->drawCount_ == 0) {
             this->drawCount_ = 1;
         }
+        SPDLOG_DEBUG("Player '{}' drawing {} card(s)", this->currentPlayer_->getName(), this->drawCount_);
         auto cards = deck_.draw(this->drawCount_);
         this->currentPlayer_->draw(this->drawCount_, cards);
         this->drawCount_ = 0;
@@ -226,6 +237,7 @@ namespace UNO::GAME {
 
     void ServerGameState::endGame()
     {
+        SPDLOG_INFO("Ending server game, returning to pre-game state");
         this->serverGameStage_ = ServerGameStage::PRE_GAME;
         deck_.clear();
 

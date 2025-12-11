@@ -49,7 +49,7 @@ namespace UNO::UI {
         for (auto color : GAME::AllColors) {
             for (auto type : GAME::AllTypes) {
                 this->images_[{color, type}] =
-                    slint::Image::load_from_path(std::format("../assets/cards/{}.svg", GAME::Card{color, type}.toString()).data());
+                    slint::Image::load_from_path(std::format("assets/cards/{}.svg", GAME::Card{color, type}.toString()).data());
             }
         }
     }
