@@ -137,6 +137,7 @@ namespace UNO::GAME {
     {
         this->players_     = players;
         this->discardPile_ = discardPile;
+        this->drawCount_   = 0;
         player_.draw(std::vector<Card>(handCard.begin(), handCard.end()));
         this->currentPlayer_ = this->players_.begin() + static_cast<int>(currentPlayerIndex);
         this->self_          = this->players_.begin() + static_cast<int>(selfIndex);
@@ -199,6 +200,7 @@ namespace UNO::GAME {
 
     void ServerGameState::init()
     {
+        this->drawCount_ = 0;
         SPDLOG_INFO("Initializing server game state");
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
             discardPile_.add(deck_.draw());
