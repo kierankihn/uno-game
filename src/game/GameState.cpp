@@ -200,7 +200,6 @@ namespace UNO::GAME {
 
     void ServerGameState::init()
     {
-        this->drawCount_ = 0;
         SPDLOG_INFO("Initializing server game state");
         while (discardPile_.isEmpty() || discardPile_.getFront().getType() > CardType::NUM9) {
             discardPile_.add(deck_.draw());

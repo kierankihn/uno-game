@@ -297,6 +297,7 @@ namespace UNO::GAME {
     template<PlayerStateTypeConcept PlayerStateType>
     void GameState<PlayerStateType>::endGame()
     {
+        drawCount_ = 0;
         discardPile_.clear();
         for (auto &player : this->players_) {
             player.clear();
