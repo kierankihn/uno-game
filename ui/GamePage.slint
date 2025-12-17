@@ -605,6 +605,7 @@ export component GamePage inherits Window {
                         width: parent.width;
                         height: parent.height;
                         clicked => {
+                            root.selected-card-index = -1;
                             root.request-draw-card();
                         }
                     }
