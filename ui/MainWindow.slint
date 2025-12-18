@@ -1,6 +1,12 @@
 import { ConnectPage } from "ConnectPage.slint";
 import { StartPage } from "StartPage.slint";
-import { GamePage, OtherPlayer, HandCard, CardColor, GameDirection } from "GamePage.slint";
+import {
+    GamePage,
+    OtherPlayer,
+    HandCard,
+    CardColor,
+    GameDirection,
+} from "GamePage.slint";
 
 enum PageType {
     ConnectPage,
@@ -35,17 +41,23 @@ export component MainWindow inherits Window {
     callback request-draw-card;
     callback request-uno;
 
-    width: 1920px;
-    height: 1080px;
+    preferred-width: 1920px;
+    preferred-height: 1080px;
+    min-width: 960px;
+    min-height: 600px;
     title: "UNO!";
 
+    property <float> scale: min(self.width / 1920px, self.height / 1080px);
+
     if root.active-page == PageType.ConnectPage: connect-page := ConnectPage {
+        scale: root.scale;
         is-connecting: root.is-connecting;
         request-connect(server-address, server-port, player-name) => {
             root.request-connect(server-address, server-port, player-name);
         }
     }
     if root.active-page == PageType.StartPage: start-page := StartPage {
+        scale: root.scale;
         is-ready: root.is-ready;
         is-restart: root.is-restart;
         request-start => {
@@ -53,6 +65,7 @@ export component MainWindow inherits Window {
         }
     }
     if root.active-page == PageType.GamePage: game-page := GamePage {
+        scale: root.scale;
         other-players: root.other-players;
         current-player-name: root.current-player-name;
         current-player-card-count: root.current-player-card-count;
