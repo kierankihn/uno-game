@@ -660,7 +660,7 @@ export component GamePage inherits Rectangle {
 
         // ===== 底部：当前玩家区域 =====
         Rectangle {
-            height: 320px * scale;
+            height: 350px * scale;
             background: #FDFBF8;
             border-radius: 16px * scale;
             drop-shadow-blur: 10px * scale;
@@ -721,16 +721,19 @@ export component GamePage inherits Rectangle {
 
                     // 手牌列表 - 上方留出空间给选中效果
                     Rectangle {
-                        height: 210px * scale;
+                        width: 1200px * scale;
+                        height: 230px * scale;
+                        horizontal-stretch: 1;
                         background: transparent;
 
-                        // 手牌容器，向下偏移以给选中卡牌留空间，居中显示
-                        Rectangle {
-                            x: (parent.width - self.width) / 2;
-                            y: 25px * scale;
-                            width: hand-cards-layout.preferred-width;
-                            height: 180px * scale;
+                        // 手牌滚动容器
+                        ScrollView {
+                            width: 100%;
+                            height: 100%;
+                            
+                            // 手牌容器，向下偏移以给选中卡牌留空间
                             hand-cards-layout := HorizontalLayout {
+                                y: 25px * scale;
                                 alignment: center;
                                 spacing: -35px * scale; // 卡牌重叠效果
 
